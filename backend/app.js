@@ -1,14 +1,23 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Cards from './dbCards.js';
+import dbModel from './dbModel.js';
 import cors from 'cors'
 import dotenv from 'dotenv';
+import Pusher from 'pusher';
 dotenv.config()
 
 //App config
 const app = express();
 const port = process.env.PORT || 8001
-const url = 'mongodb+srv://admin:sd44aCVkFhfoAkAY@mern-projects.lrj6l.mongodb.net/<dbname>?retryWrites=true&w=majority';
+
+const pusher = new Pusher({
+    app_id: "1098087",
+    key: "9a472b4436fc124bf704",
+    secret: "c81056eb86237985a784",
+    cluster: "mt1",
+    useTLS: true
+  });
 
 //middlewares
 app.use(express.json())
@@ -19,6 +28,30 @@ mongoose.connect(process.env.URL, {
     useNewUrlParser:true,
     useCreateIndex:true,
     useUnifiedTopology:true
+})
+mongoose.connection.once('open', ()=> {
+    console.log('db connected')
+    
+    const changeStream = mongoose.connection.collection('posts').watch();
+
+    changeStream.on('change', (change) => {
+        console.log('change triggered on pusher')
+        console.log(change);
+        console.log('end of change');
+
+        if (change.operationType === 'insert') {
+            console.log('Triggering Pusher **IMG UPLOAD***')
+
+            const postDetails = change.fullDocument;
+            pusher.trigger('posts', 'inserted', {
+                user: postDetails.user,
+                capton: postDetails.caption,
+                image: postDetails.image
+            })
+        } else {
+            console.log('unknown trigger from pusher')
+        }
+    })
 })
 
 //API Endpoints
@@ -40,7 +73,33 @@ app.post('/tinder/card', (req, res) => {
 
 app.get('/tinder/card', (req, res) => {
 
+    const dbCard = req.body;
+
     Cards.find({}, (err, data) => {
+        if (err) {
+            res.status(500).send(err)
+        } else{
+            console.log(data)
+            res.status(200).send(data)
+        }
+    })
+})
+
+app.post('/upload', (req, res) => {
+    const body = req.body;
+
+    dbModel.create(body, (err, data) => {
+        if (err) {
+            res.status(500).send(err)
+        } else{
+            console.log(data)
+            res.status(200).send(data)
+        }
+    })
+})
+
+app.get('/sync', (req, res) => {
+    dbModel.find({}, (err, data) => {
         if (err) {
             res.status(500).send(err)
         } else{
