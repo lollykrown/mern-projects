@@ -1,16 +1,15 @@
 import './App.css';
-import Header from './Header';
 import Login from './Login';
-import SwipeButtons from './SwipeButtons';
-import TinderCards from './TinderCards';
+import Home from './Home';
+import { Switch, Route } from 'react-router-dom'
 
 function App() {
   return (
-    <div className="app">
-      <Login/>
-      {/* <Header/> */}
-      <TinderCards/>
-      <SwipeButtons/>
+    <div className="">
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/login" component={Login} />
+      </Switch>
     </div>
   );
 }
