@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import Cards from './dbCards.js';
 import cors from 'cors'
+import dotenv from 'dotenv';
+dotenv.config()
 
 //App config
 const app = express();
@@ -13,7 +15,7 @@ app.use(express.json())
 app.use(cors());
 
 //DB config
-mongoose.connect(url, {
+mongoose.connect(process.env.URL, {
     useNewUrlParser:true,
     useCreateIndex:true,
     useUnifiedTopology:true
