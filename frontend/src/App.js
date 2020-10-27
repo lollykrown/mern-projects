@@ -1,17 +1,16 @@
-import './App.css';
-import Login from './Login';
-import Home from './Home';
-import { Switch, Route } from 'react-router-dom'
+import React from 'react'
+import Video from './Video'
+import './App.css'
 
-function App() {
-  return (
-    <div className="">
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/login" component={Login} />
-      </Switch>
-    </div>
-  );
+const App = () => {
+    return (
+        <div className="app">
+            <div className="app_videos">
+                <Video />
+                <Video />
+            </div>
+        </div>
+    )
 }
 
-export default App;
+export default App
