@@ -39,12 +39,12 @@ app.post('/tinder/card', (req, res) => {
 })
 
 app.get('/tinder/card', (req, res) => {
-    const dbCard = req.body;
 
     Cards.find({}, (err, data) => {
         if (err) {
             res.status(500).send(err)
         } else{
+            console.log(data)
             res.status(200).send(data)
         }
     })
