@@ -46,4 +46,5 @@ const TinderCards = () => {
     )
 }
 
+
 export default TinderCards
