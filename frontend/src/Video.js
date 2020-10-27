@@ -27,8 +27,8 @@ const Video = () => {
                 onClick={handleVideoPress}
             </video>
 
-            <VideoFooter />
-            <VideoSidebar />
+            <VideoFooter channel="lollykrown" desc="epic"/>
+            <VideoSidebar likes={111} shares={222} messages={333}/>
         </div>
     )
 }
