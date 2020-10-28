@@ -56,9 +56,9 @@ const Wrapper = styled.div`
 const NoFeedSuggestions = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const history = useHistory();
 
-  console.log('history', history)
   const signal = useRef(axios.CancelToken.source());
 
   useEffect(() => {

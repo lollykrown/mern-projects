@@ -1,18 +1,42 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PostPreview from "../components/PostPreview";
 import Loader from "../components/PostPreview";
-import { client } from "../utils";
+import axios from 'axios'
 
 const Explore = () => {
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
 
+  const signal = useRef(axios.CancelToken.source());
+
   useEffect(() => {
-    client("/posts").then((res) => {
-      setPosts(res.data);
-      setLoading(false);
-    });
-  }, []);
+
+    const getPosts = async () => {    
+  
+      try {
+        const res = await axios.get('http://localhost:8001/posts',  {
+          withCredentials:true,
+          cancelToken: signal.current.token })
+
+          console.log('posts', res)
+          setPosts(res.data.data);
+          setLoading(false);
+
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        } else {
+          throw error
+        }
+      }
+    };
+    
+    getPosts()
+    return () => {
+      console.log('unmount and cancel running axios request');
+      signal.current.cancel('Operation canceled by the user.');
+    };
+  }, [])
 
   if (loading) {
     return <Loader />;

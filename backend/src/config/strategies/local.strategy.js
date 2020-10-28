@@ -25,13 +25,14 @@ module.exports = function localStrategy() {
                 message: 'Incorrect username'
               });
             }
+            console.log(result)
             bcrypt.compare(password, result.password).then(valid => {
               console.log(valid)
               if (!valid) {
                 console.log('Invalid password')
                 return done(null, false, {
                   status: false,
-                  message: 'Incorrect password'
+                  message: 'Password is Incorrect'
                 })
               }
               //if(user && valid){
@@ -40,6 +41,7 @@ module.exports = function localStrategy() {
                   email: result.email,
                   username: result.username,
                   fullname: result.fullname,
+                  avatar: result.avatar
                 }
                 return done(null, user, {
                   status: true,

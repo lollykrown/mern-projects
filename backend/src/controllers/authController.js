@@ -50,10 +50,10 @@ function authController() {
 
         bcrypt
           .hash(password, 10)
-          .then((password) => {
+          .then((p) => {
             const user = new User({
               email,
-              password,
+              password:p,
               username,
               fullname,
             });

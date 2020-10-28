@@ -31,7 +31,11 @@ function router() {
                         //logger.error(err)
                         return next(err);
                     }
-                    return res.status(200).json({ status: true, message: 'logged in', data: user });
+                    return res.status(200).json({ 
+                        status: true, 
+                        message: 'logged in', 
+                        data: user 
+                    });
                 });
             })(req, res, next);
         });

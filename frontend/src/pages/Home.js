@@ -24,9 +24,9 @@ const Home = (props) => {
   const [loading, setLoading] = useState(true);
 
   const signal = useRef(axios.CancelToken.source());
-  const history = useHistory();
-  console.log('history in home', history)
 
+  const history = useHistory();
+  // console.log('history in home', history)
 
   useEffect(() => {
     const checkAuthStatus = async () => {    
