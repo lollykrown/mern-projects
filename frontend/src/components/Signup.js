@@ -1,17 +1,20 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import { toast } from "react-toastify";
 import { client } from "../utils";
 import { FormWrapper } from "./Login";
 import useInput from "../hooks/useInput";
 import { UserContext } from "../context/UserContext";
-
+import axios from 'axios'
 import logo from "../assets/logo.png";
-const Signup = ({ login }) => {
+
+const Signup = (props) => {
   const { setUser } = useContext(UserContext);
   const email = useInput("");
   const fullname = useInput("");
   const username = useInput("");
   const password = useInput("");
+
+  const signal = useRef(axios.CancelToken.source());
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -40,16 +43,44 @@ const Signup = ({ login }) => {
       fullname: fullname.value,
     };
 
+    console.log(body)
     try {
-      const { token } = await client("/auth/signup", { body });
-      localStorage.setItem("token", token);
+      const res = await axios.post('http://localhost:8001/signup', body, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+        cancelToken: signal.current.token
+      })
+
+      console.log(res.data)
+      res.data.status && props.history.replace('/')
+
+      if (!res.status) {
+        //console.log(res.message)
+        toast.error(res.data.message)
+        return;
+      }
     } catch (err) {
-      return toast.error(err.message);
+      if (axios.isCancel(e)) {
+        console.log('Get request canceled');
+        toast.error(e.message)
+      } else {
+        console.log(err)
+        toast.error(err.message)
+      }
     }
 
-    const user = await client("/auth/me");
-    setUser(user.data);
-    localStorage.setItem("user", JSON.stringify(user.data));
+    // try {
+    //   const { token } = await client("/auth/signup", { body });
+    //   localStorage.setItem("token", token);
+    // } catch (err) {
+    //   return toast.error(err.message);
+    // }
+
+    // const user = await client("/auth/me");
+    // setUser(user.data);
+    // localStorage.setItem("user", JSON.stringify(user.data));
 
     fullname.setValue("");
     username.setValue("");
@@ -91,7 +122,7 @@ const Signup = ({ login }) => {
 
       <div>
         <p>
-          Already have an account? <span onClick={login}>Login</span>
+          Already have an account? <span onClick={props.login}>Login</span>
         </p>
       </div>
     </FormWrapper>

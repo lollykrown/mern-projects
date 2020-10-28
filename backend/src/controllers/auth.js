@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const asyncHandler = require("../middlewares/asyncHandler");
 
-function userController() {
+function authController() {
   // Sign up with email address
   function signUpWithEmail(req, res) {
     (async function auth() {
@@ -145,7 +145,7 @@ function userController() {
     //     );
     //   next();
     // });
-    res.json({ msg: "logged out" });
+    res.json({ message: "logged out" });
   }
 
   function getUser(req, res) {
@@ -215,7 +215,7 @@ function userController() {
   };
 }
 
-module.exports = userController;
+module.exports = authController;
 
 
 // exports.me = asyncHandler(async (req, res, next) => {

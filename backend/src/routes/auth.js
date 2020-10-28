@@ -1,11 +1,10 @@
 const express = require("express");
 const authRouter = express.Router();
-const { signUpWithEmail, signOut } = require("../controllers/auth");
-const { protect } = require("../middlewares/auth");
-
-// router.route("/me").get(protect, me);
+const passport = require('passport');
+const authController = require("../controllers/auth");
 
 function router() {
+    const { signUpWithEmail, signOut } = authController()
     //sign up with email
     authRouter.route("/signup").post(signUpWithEmail)
 
@@ -32,21 +31,25 @@ function router() {
                         //logger.error(err)
                         return next(err);
                     }
-                    return res.status(200).json({ status: true, message: 'logged in', user });
+                    return res.status(200).json({ status: true, message: 'logged in', data: user });
                 });
             })(req, res, next);
         });
 
     authRouter.route("/me").get((req, res) => {
         if (req.user) {
-            console.log('user',req.user)
-            const { avatar, username, fullname, email, _id, website, bio } = req.user;
+            console.log('user', req.user)
 
             res.status(200)
                 .json({
-                    success: true,
-                    data: { avatar, username, fullname, email, _id, website, bio },
+                    status: true,
+                    data: req.user,
                 });
+        } else {
+            res.status(203).json({
+                status:false,
+                message: "You need to login first",
+            });
         }
     });
 

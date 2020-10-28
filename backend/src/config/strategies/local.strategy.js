@@ -1,7 +1,7 @@
 const passport = require('passport');
 const { Strategy } = require('passport-local');
-const debug = require('debug')('app:local.strategy');
-const User = require('../../models/users')
+// const debug = require('debug')('app:local.strategy');
+const User = require('../../models/User')
 const bcrypt = require('bcryptjs');
 
 module.exports = function localStrategy() {
@@ -12,23 +12,23 @@ module.exports = function localStrategy() {
     }, (username, password, done) => {
       (async function auth() {
         try {
-          debug(username, password)
+          console.log(username, password)
           // const query = { $or: [{ email: { $regex: username, $options: 'i' } }, { phone: { $regex: username, $options: 'i' } }] }
 
           // User.find( { $or:[ {email:username}, {phone:username} ]},function (err, user) {
           User.findOne({ username }, function (err, result) {
             if (err) return done(err);
             if (!result) {
-              debug('User not found')
+              console.log('User not found')
               return done(null, false, {
                 status: false,
                 message: 'Incorrect username'
               });
             }
             bcrypt.compare(password, result.password).then(valid => {
-              debug(valid)
+              console.log(valid)
               if (!valid) {
-                debug('Invalid password')
+                console.log('Invalid password')
                 return done(null, false, {
                   status: false,
                   message: 'Incorrect password'
@@ -39,18 +39,18 @@ module.exports = function localStrategy() {
                   id: result._id,
                   email: result.email,
                   username: result.username,
-                  profileName: result.profileName,
+                  fullname: result.fullname,
                 }
                 return done(null, user, {
                   status: true,
                   message: 'Success'
                 });
               //}
-            }).catch(err => debug(err));
+            }).catch(err => console.log(err));
 
           })
         } catch (err) {
-          debug(err.stack)
+          console.log(err.stack)
           return done(err)
           // res.status(500).json({
           //   message: 'Internal Server Error'

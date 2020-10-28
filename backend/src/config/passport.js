@@ -5,7 +5,7 @@ require('./strategies/local.strategy')();
 // require('./strategies/google.strategy')();
 // require('./strategies/github.strategy')();
 
-const User = require("../models/users");
+const User = require("../models/User");
 
 module.exports = function passportConfig(app) {
     app.use(passport.initialize());

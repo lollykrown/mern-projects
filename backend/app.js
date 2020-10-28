@@ -1,10 +1,12 @@
 require("dotenv").config();
 const express = require("express");
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const mongoose = require('mongoose');
+const morgan = require('morgan');
 const cors = require("cors");
-const auth = require("./src/routes/auth");
-const user = require("./src/routes/user");
-const post = require("./src/routes/post");
-const connectToDb = require("./src/utils/db");
+const MongoStore = require('connect-mongo')(session);
+
 const errorHandler = require("./src/middlewares/errorHandler");
 
 //App config
@@ -19,11 +21,60 @@ const port = process.env.PORT || 8001
 //     useTLS: true
 //   });
 
-connectToDb();
-app.use(express.json());
-app.use(cors());
+mongoose.connect(process.env.DB_URL, { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true, 
+    useFindAndModify: false, 
+    useCreateIndex: true 
+  });
+const db = mongoose.connection;
 
-app.use("/auth", auth);
+const sessionOptions = {
+  saveUninitialized: false,
+  resave: false,
+  secret: process.env.SECRET,
+  cookie: {
+    //secure: true,
+    path: '/',
+    httpOnly: true,
+    maxAge: 10000 // 60 x 1000sec
+  },
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  name: 'id',
+}
+
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () {
+  // log.info(`Connected to MongoDB: ${db.host}`);
+  console.log(`Connected to MongoDB: ${db.host}`);
+});
+
+// Set up CORS
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  methods: ['POST', 'PUT', 'GET', 'PATCH','OPTIONS', 'DELETE','HEAD'],
+  credentials: true,
+  allowedHeaders: "Content-Type, Authorization, X-Requested-With",
+
+  // "preflightContinue": false,
+  // "optionsSuccessStatus": 204,
+//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+ }
+
+app.use(express.json());
+app.use(cors(corsOptions));
+app.use(morgan('tiny'));
+app.use(cookieParser());
+app.use(session(sessionOptions));
+
+require('./src/config/passport.js')(app);
+
+
+const auth = require("./src/routes/auth")();
+const user = require("./src/routes/user");
+const post = require("./src/routes/post")();
+
+app.use("/", auth);
 app.use("/users", user);
 app.use("/posts", post);
 

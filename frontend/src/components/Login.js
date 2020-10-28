@@ -1,10 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import { client } from "../utils";
 import useInput from "../hooks/useInput";
 import { UserContext } from "../context/UserContext";
 import logo from "../assets/logo.png";
+import axios from 'axios'
+import { useLocation, withRouter } from "react-router";
 
 export const FormWrapper = styled.div`
   background-color: ${(props) => props.theme.white};
@@ -49,35 +50,56 @@ export const FormWrapper = styled.div`
   }
 `;
 
-const Login = ({ signup }) => {
+const Login = (props) => {
+
+  console.log('props', props)
   const { setUser } = useContext(UserContext);
-  const email = useInput("");
+  const username = useInput("");
   const password = useInput("");
+
+  const signal = useRef(axios.CancelToken.source());
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!email.value || !password.value) {
+    if (!username.value || !password.value) {
       return toast.error("Please fill in both the fields");
     }
 
-    const body = { email: email.value, password: password.value };
+    const body = { username: username.value, password: password.value };
 
     try {
-      const { token } = await client("/auth/login", { body });
-      console.log(token)
-      localStorage.setItem("token", token);
+      const res = await axios.post('http://localhost:8001/login', body, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+        cancelToken: signal.current.token
+      })
+
+      if (!res.status) {
+        //console.log(res.message)
+        toast.error(res.data.message)
+        return;
+      }
+      console.log(res)
+      localStorage.setItem("user", JSON.stringify(res.data));
+
+      // res.data.status && props.history.replace('/')
+      setUser(res.data);
+      toast.success("Login successful");
+
     } catch (err) {
-      console.log(err)
-      return toast.error(err.message);
+      if (axios.isCancel(e)) {
+        console.log('Get request canceled');
+        toast.error(e.message)
+      } else {
+        console.log(err)
+        toast.error(err.message)
+      }
     }
 
-    const user = await client("/auth/me");
-    localStorage.setItem("user", JSON.stringify(user.data));
-    setUser(user.data);
-    toast.success("Login successful");
-
-    email.setValue("");
+    username.setValue("");
     password.setValue("");
   };
 
@@ -88,8 +110,8 @@ const Login = ({ signup }) => {
         <input
           type="text"
           placeholder="johnwick@gmail.com"
-          value={email.value}
-          onChange={email.onChange}
+          value={username.value}
+          onChange={username.onChange}
         />
         <input
           type="password"
@@ -102,7 +124,7 @@ const Login = ({ signup }) => {
 
       <div>
         <p>
-          Don't have an account? <span onClick={signup}>Sign up</span>
+          Don't have an account? <span onClick={props.signup}>Sign up</span>
         </p>
       </div>
     </FormWrapper>
