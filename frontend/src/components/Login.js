@@ -86,7 +86,7 @@ const Login = ({ signup }) => {
       <img className="logo" src={logo} alt="logo" />
       <form>
         <input
-          type="email"
+          type="text"
           placeholder="johnwick@gmail.com"
           value={email.value}
           onChange={email.onChange}

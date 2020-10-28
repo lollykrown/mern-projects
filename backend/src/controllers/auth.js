@@ -212,20 +212,19 @@ function userController() {
     signUpWithEmail,
     signOut,
     getUser,
-    addFollowing
   };
 }
 
 module.exports = userController;
 
 
-exports.me = asyncHandler(async (req, res, next) => {
-  const { avatar, username, fullname, email, _id, website, bio } = req.user;
+// exports.me = asyncHandler(async (req, res, next) => {
+//   const { avatar, username, fullname, email, _id, website, bio } = req.user;
 
-  res
-    .status(200)
-    .json({
-      success: true,
-      data: { avatar, username, fullname, email, _id, website, bio },
-    });
-});
+//   res
+//     .status(200)
+//     .json({
+//       success: true,
+//       data: { avatar, username, fullname, email, _id, website, bio },
+//     });
+// });
