@@ -13,7 +13,7 @@ function router() {
 
   postRouter.route("/").get(getPosts).post(addPost);
   // router.route("/search").get(searchPost);
-  postRouter.route("/:id").get(getPostById) //.delete(protect, deletePost);
+  postRouter.route("/:id").get(getPostById).delete(deletePost);
   // router.route("/:id/togglelike").get(protect, toggleLike);
   // router.route("/:id/togglesave").get(protect, toggleSave);
   // router.route("/:id/comments").post(protect, addComment);
