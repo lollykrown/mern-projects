@@ -155,9 +155,50 @@ function postsController() {
 
         await post.remove();
 
+        res.status(200).json({
+          status: true,
+          data: {}
+        });
+      } catch (err) {
+        console.log(err.stack);
+        res.status(500).json({
+          status: false,
+          message: "Internal Server Error",
+        });
+      }
+    })();
+  }
+
+
+  function addComment(req, res) {
+    (async function post() {
+      try {
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+          return res.status(404).json({
+            message: `No post found for id ${req.params.id}`,
+            status: false,
+          });
+        }
+
+        let comment = await Comment.create({
+          user: req.user.id,
+          post: req.params.id,
+          text: req.body.text,
+        });
+
+        post.comments.push(comment._id);
+        post.commentsCount = post.commentsCount + 1;
+        await post.save();
+
+        comment = await comment
+          .populate({ path: "user", select: "avatar username fullname" })
+          .execPopulate();
+
         res.status(200).json({ 
           status: true, 
-          data: {} 
+          data: comment 
         });
       } catch (err) {
         console.log(err.stack);
@@ -175,7 +216,7 @@ function postsController() {
     getPostById,
     addPost,
     deletePost,
-    // updateRetweetsById,
+    addComment,
     // deleteTweetById,
   };
 }
@@ -205,33 +246,6 @@ module.exports = postsController
 //   }
 
 //   res.status(200).json({ success: true, data: {} });
-// });
-
-// exports.addComment = asyncHandler(async (req, res, next) => {
-//   const post = await Post.findById(req.params.id);
-
-//   if (!post) {
-//     return next({
-//       message: `No post found for id ${req.params.id}`,
-//       statusCode: 404,
-//     });
-//   }
-
-//   let comment = await Comment.create({
-//     user: req.user.id,
-//     post: req.params.id,
-//     text: req.body.text,
-//   });
-
-//   post.comments.push(comment._id);
-//   post.commentsCount = post.commentsCount + 1;
-//   await post.save();
-
-//   comment = await comment
-//     .populate({ path: "user", select: "avatar username fullname" })
-//     .execPopulate();
-
-//   res.status(200).json({ success: true, data: comment });
 // });
 
 // exports.deleteComment = asyncHandler(async (req, res, next) => {

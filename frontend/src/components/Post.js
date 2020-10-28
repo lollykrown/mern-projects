@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import LikePost from "./LikePost";
@@ -11,6 +11,8 @@ import Avatar from "../styles/Avatar";
 import { client } from "../utils";
 import { timeSince } from "../utils";
 import { MoreIcon, CommentIcon, InboxIcon } from "./Icons";
+import { toast } from "react-toastify";
+import axios from 'axios'
 
 const ModalContentWrapper = styled.div`
   width: 300px;
@@ -134,14 +136,32 @@ const Post = ({ post }) => {
   const incLikes = () => setLikes(likesState + 1);
   const decLikes = () => setLikes(likesState - 1);
 
+
+  const signal = useRef(axios.CancelToken.source());
+
+  const handleRequest = async (id) => {
+    try {
+      const res = await axios.post(`http://localhost:8001/posts/${id}/comments`, { text: comment.value }, {
+        withCredentials: true,
+        cancelToken: signal.current.token
+      })
+      console.log(res)
+      setNewComments([...newComments, res.data.data]);
+
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        console.log('Get request canceled');
+        toast.error(err.message)
+      } else {
+        console.log(err)
+        toast.error(err.message)
+      }
+    }
+  };
   const handleAddComment = (e) => {
     if (e.keyCode === 13) {
       e.preventDefault();
-
-      client(`/posts/${post._id}/comments`, {
-        body: { text: comment.value },
-      }).then((resp) => setNewComments([...newComments, resp.data]));
-
+      handleRequest(post._id)
       comment.setValue("");
     }
   };

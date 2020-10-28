@@ -1,11 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import Modal from "./Modal";
 import useInput from "../hooks/useInput";
 import { FeedContext } from "../context/FeedContext";
-import { client, uploadImage } from "../utils";
+import { uploadImage } from "../utils";
 import { NewPostIcon } from "./Icons";
+import axios from 'axios'
 
 const NewPostWrapper = styled.div`
   .newpost-header {
@@ -70,7 +71,10 @@ const NewPost = () => {
     }
   };
 
-  const handleSubmitPost = () => {
+  const signal = useRef(axios.CancelToken.source());
+
+
+  const handleSubmitPost = async () => {
     if (!caption.value) {
       return toast.error("Please write something");
     }
@@ -88,21 +92,38 @@ const NewPost = () => {
 
     caption.setValue("");
 
-    const newPost = {
+    const body = {
       caption: cleanedCaption,
       files: [postImage],
       tags,
     };
 
-    client(`/posts`, { body: newPost }).then((res) => {
-      const post = res.data;
+    try {
+      const res = await axios.post('http://localhost:8001/posts', body, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+        cancelToken: signal.current.token
+      })
+      console.log(res)
+      const post = res.data.data;
       post.isLiked = false;
       post.isSaved = false;
       post.isMine = true;
       setFeed([post, ...feed]);
       window.scrollTo(0, 0);
       toast.success("Your post has been submitted successfully");
-    });
+    
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        console.log('Get request canceled');
+        toast.error(err.message)
+      } else {
+        console.log(err)
+        toast.error(err.message)
+      }
+    }
   };
 
   return (

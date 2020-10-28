@@ -89,9 +89,9 @@ const Login = (props) => {
       setUser(res.data.data);
       toast.success("Login successful");
     } catch (err) {
-      if (axios.isCancel(e)) {
+      if (axios.isCancel(err)) {
         console.log('Get request canceled');
-        toast.error(e.message)
+        toast.error(err.message)
       } else {
         console.log(err)
         toast.error(err.message)

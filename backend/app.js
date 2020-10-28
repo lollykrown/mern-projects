@@ -70,13 +70,13 @@ app.use(session(sessionOptions));
 require('./src/config/passport.js')(app);
 
 
-const auth = require("./src/routes/authRoutes")();
-const user = require("./src/routes/userRoutes")();
-const post = require("./src/routes/postRoutes")();
+const authRouter = require("./src/routes/authRoutes")();
+const userRouter = require("./src/routes/userRoutes")();
+const postRouter = require("./src/routes/postRoutes")();
 
-app.use("/", auth);
-app.use("/users", user);
-app.use("/posts", post);
+app.use("/", authRouter);
+app.use("/users", userRouter);
+app.use("/posts", postRouter);
 
 app.use(errorHandler);
 

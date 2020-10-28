@@ -5,19 +5,19 @@ const postsController = require('../controllers/postController')
 
 function router() {
 
-  const { isUserSignedIn, getPosts, getPostById, addPost, deletePost } = postsController()
+  const { isUserSignedIn, getPosts, getPostById, addPost, deletePost, addComment } = postsController()
 
   // Check if user is logged in 
   postRouter.use(isUserSignedIn);
 
 
   postRouter.route("/").get(getPosts).post(addPost);
-  // router.route("/search").get(searchPost);
+  // postRouter.route("/search").get(searchPost);
   postRouter.route("/:id").get(getPostById).delete(deletePost);
-  // router.route("/:id/togglelike").get(protect, toggleLike);
-  // router.route("/:id/togglesave").get(protect, toggleSave);
-  // router.route("/:id/comments").post(protect, addComment);
-  // router.route("/:id/comments/:commentId").delete(protect, deleteComment);
+  // postRouter.route("/:id/togglelike").get(protect, toggleLike);
+  // routpostRouterer.route("/:id/togglesave").get(protect, toggleSave);
+  postRouter.route("/:id/comments").post(addComment);
+  // postRouter.route("/:id/comments/:commentId").delete(protect, deleteComment);
 
   return postRouter
 }

@@ -1,11 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "../styles/Button";
-import { client } from "../utils";
+import axios from 'axios'
+import { toast } from "react-toastify";
 
 const Follow = ({ nobtn, isFollowing, incFollowers, decFollowers, userId }) => {
   const [followingState, setFollowingState] = useState(isFollowing);
 
   useEffect(() => setFollowingState(isFollowing), [isFollowing]);
+
+  const signal = useRef(axios.CancelToken.source());
+
+  const handleRequest = async (action) => {
+    try {
+      const res = await axios.get(`http://localhost:8001/users/${userId}/${action}`, {
+        withCredentials: true,
+        cancelToken: signal.current.token
+      })
+      console.log(res)
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        console.log('Get request canceled');
+        toast.error(err.message)
+      } else {
+        console.log(err)
+        toast.error(err.message)
+      }
+    }
+  };
 
   const handleFollow = () => {
     if (followingState) {
@@ -13,13 +34,13 @@ const Follow = ({ nobtn, isFollowing, incFollowers, decFollowers, userId }) => {
       if (decFollowers) {
         decFollowers();
       }
-      client(`/users/${userId}/unfollow`);
+      handleRequest('unfollow')
     } else {
       setFollowingState(true);
       if (incFollowers) {
         incFollowers();
       }
-      client(`/users/${userId}/follow`);
+      handleRequest('follow')
     }
   };
 

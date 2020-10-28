@@ -74,7 +74,7 @@ const Home = (props) => {
           cancelToken: signal.current.token })
 
           console.log('posts', res)
-          setFeed(res.data)
+          setFeed(res.data.data)
           setLoading(false);
       } catch (error) {
         if (axios.isCancel(error)) {
