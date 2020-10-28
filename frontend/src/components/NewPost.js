@@ -76,7 +76,7 @@ const NewPost = () => {
 
   const handleSubmitPost = async () => {
     if (!caption.value) {
-      return toast.error("Please write something");
+      return toast.error("Please write a caption");
     }
 
     setShowModal(false);

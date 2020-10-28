@@ -11,8 +11,8 @@ function userController() {
       next();
     } else {
       // You are not logged in
-      console.log('You need to log in first')
-      res.status(400).json({ status: false, message: 'You need to log in first' })
+      console.log('You must log in first')
+      res.status(400).json({ status: false, message: 'You must log in first' })
     }
   }
 
@@ -78,7 +78,7 @@ function userController() {
     (async function post() {
       try {
         let users = await User.find().select("-password").lean().exec();
-
+console.log('passport', req.session.passport.user)
         users.forEach((user) => {
           user.isFollowing = false;
           const followers = user.followers.map((follower) => follower._id.toString());

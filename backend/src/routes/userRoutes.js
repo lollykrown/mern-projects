@@ -10,8 +10,7 @@ function router() {
   // Check if user is logged in 
   userRouter.use(isUserSignedIn);
 
-  userRouter.route("/").get(getUsers);
-  userRouter.route("/").put(editUser);
+  userRouter.route("/").get(getUsers).put(editUser);
   userRouter.route("/feed").get(feed);
   userRouter.route("/search").get(searchUser);
   userRouter.route("/:username").get(getUser);
