@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import PostPreview from "../components/PostPreview";
@@ -6,7 +6,8 @@ import ProfileHeader from "../components/ProfileHeader";
 import Placeholder from "../components/Placeholder";
 import Loader from "../components/Loader";
 import { PostIcon, SavedIcon } from "../components/Icons";
-import { client } from "../utils";
+import { toast } from "react-toastify";
+import axios from 'axios'
 
 const Wrapper = styled.div`
   .profile-tab {
@@ -44,16 +45,40 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [deadend, setDeadend] = useState(false);
 
+  const signal = useRef(axios.CancelToken.source());
+
   useEffect(() => {
-    window.scrollTo(0, 0);
-    client(`/users/${username}`)
-      .then((res) => {
-        setLoading(false);
-        setDeadend(false);
-        setProfile(res.data);
-      })
-      .catch((err) => setDeadend(true));
-  }, [username]);
+
+    const getUser = async () => {
+
+      try {
+        const res = await axios.get(`http://localhost:8001/users/${username}`, {
+          withCredentials: true,
+          cancelToken: signal.current.token
+        })
+
+        console.log('user profile', res)
+        if (res.data.status) {
+          setLoading(false);
+          setDeadend(false);
+          setProfile(res.data);
+        }
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        } else {
+          setDeadend(true)
+          throw error
+        }
+      }
+    };
+
+    getUser()
+    return () => {
+      console.log('unmount and cancel running axios request');
+      signal.current.cancel('Operation canceled by the user.');
+    };
+  }, [username])
 
   if (!deadend && loading) {
     return <Loader />;
@@ -99,8 +124,8 @@ const Profile = () => {
               icon="post"
             />
           ) : (
-            <PostPreview posts={profile?.posts} />
-          )}
+              <PostPreview posts={profile?.posts} />
+            )}
         </>
       )}
 
@@ -113,8 +138,8 @@ const Profile = () => {
               icon="bookmark"
             />
           ) : (
-            <PostPreview posts={profile?.savedPosts} />
-          )}
+              <PostPreview posts={profile?.savedPosts} />
+            )}
         </>
       )}
     </Wrapper>

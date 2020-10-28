@@ -83,10 +83,10 @@ const Login = (props) => {
         return;
       }
       console.log(res)
-      localStorage.setItem("user", JSON.stringify(res.data));
+      localStorage.setItem("user", JSON.stringify(res.data.data));
 
       // res.data.status && props.history.replace('/')
-      setUser(res.data);
+      setUser(res.data.data);
       toast.success("Login successful");
 
     } catch (err) {

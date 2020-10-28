@@ -8,6 +8,7 @@ import { FeedContext } from "../context/FeedContext";
 import { UserContext } from "../context/UserContext";
 import { toast } from "react-toastify";
 import axios from 'axios'
+import { useHistory } from "react-router-dom";
 
 const Wrapper = styled.div`
   @media screen and (max-width: 1040px) {
@@ -22,28 +23,9 @@ const Home = (props) => {
   const { feed, setFeed } = useContext(FeedContext);
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   const logout = () => {
-  //     localStorage.removeItem("token");
-  //     localStorage.removeItem("user");
-  //     setUser(null);
-  //   };
-
-  //   client("/users/feed")
-  //     .then((res) => {
-  //       setFeed(res.data);
-  //       setLoading(false);
-  //     })
-	// 		.catch(res => {
-  //       if(!res.status){
-  //         props.history.replace('/login')
-  //       }
-  //       console.log(res)
-  //     });
-  // }, [setFeed, setUser]);
-
   const signal = useRef(axios.CancelToken.source());
-
+  const history = useHistory();
+  console.log('history in home', history)
 
   useEffect(() => {
 
@@ -53,6 +35,7 @@ const Home = (props) => {
         const res = await axios.get('http://localhost:8001/posts',  {
           withCredentials:true,
           cancelToken: signal.current.token })
+
           console.log('posts', res)
           setFeed(res.data)
           setLoading(false);
@@ -76,12 +59,14 @@ const Home = (props) => {
           if(res.data.status){
             setUser(res.data.data)
             getPosts()
+            setLoading(false)
           }
 
           if(!res.data.status){
             localStorage.removeItem("user");
             console.log('user',user)
             toast.error(res.data.message)
+            // props.history.replace('/login')
           }
       } catch (error) {
         if (axios.isCancel(error)) {
@@ -98,15 +83,6 @@ const Home = (props) => {
       signal.current.cancel('Operation canceled by the user.');
     };
   }, [user, setFeed])
-
-  // useEffect(() => {
-
-  //   getPosts()
-  //   return () => {
-  //     console.log('unmount and cancel running axios request');
-  //     signal.current.cancel('Operation canceled by the user.');
-  //   };
-  // }, [])
 
   if (loading) {
     return <Loader />;

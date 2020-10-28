@@ -30,9 +30,12 @@ function postsController() {
           data: posts
         });
       } catch (err) {
-        console.log(err.stack)
+        console.log(err.stack);
+        res.status(500).json({
+          message: "Internal Server Error",
+        });
       }
-    }());
+    })();
   }
 
   function getPostById(req, res) {
@@ -85,11 +88,14 @@ function postsController() {
   
     res.status(200).json({ success: true, data: post });
 
-      } catch (err) {
-        debug(err.stack)
-      }
-    }());
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
   }
+})();
+}
   return {
     isUserSignedIn,
     getPosts,

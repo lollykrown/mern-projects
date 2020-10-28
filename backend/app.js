@@ -37,7 +37,7 @@ const sessionOptions = {
     //secure: true,
     path: '/',
     httpOnly: true,
-    maxAge: 10000 // 60 x 1000sec
+    maxAge: 120000 // 60 x 1000sec
   },
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
   name: 'id',
@@ -70,9 +70,9 @@ app.use(session(sessionOptions));
 require('./src/config/passport.js')(app);
 
 
-const auth = require("./src/routes/auth")();
-const user = require("./src/routes/user");
-const post = require("./src/routes/post")();
+const auth = require("./src/routes/authRoutes")();
+const user = require("./src/routes/userRoutes")();
+const post = require("./src/routes/postRoutes")();
 
 app.use("/", auth);
 app.use("/users", user);
