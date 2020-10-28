@@ -27,6 +27,43 @@ const Home = (props) => {
   const history = useHistory();
   console.log('history in home', history)
 
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {    
+  
+      try {
+        const res = await axios.get('http://localhost:8001/me',  {
+          withCredentials:true,
+          cancelToken: signal.current.token })
+
+          console.log('checking', res)
+          if(res.data.status){
+            setUser(res.data.data)
+          }
+
+          if(!res.data.status){
+            localStorage.removeItem("user");
+            console.log('user',user)
+            toast.error('Your session is expired')
+            // props.history.replace('/login')
+          }
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        } else {
+          throw error
+        }
+      }
+    };
+    
+    checkAuthStatus()
+    return () => {
+      console.log('unmount and cancel running axios request');
+      signal.current.cancel('Operation canceled by the user.');
+    };
+  }, [setUser])
+
+
   useEffect(() => {
 
     const getPosts = async () => {    
@@ -48,41 +85,12 @@ const Home = (props) => {
       }
     };
     
-    const checkAuthStatus = async () => {    
-  
-      try {
-        const res = await axios.get('http://localhost:8001/me',  {
-          withCredentials:true,
-          cancelToken: signal.current.token })
-
-          console.log('checking', res)
-          if(res.data.status){
-            setUser(res.data.data)
-            getPosts()
-            setLoading(false)
-          }
-
-          if(!res.data.status){
-            localStorage.removeItem("user");
-            console.log('user',user)
-            toast.error(res.data.message)
-            // props.history.replace('/login')
-          }
-      } catch (error) {
-        if (axios.isCancel(error)) {
-          console.log('Request canceled', error.message);
-        } else {
-          throw error
-        }
-      }
-    };
-    
-    checkAuthStatus()
+    getPosts()
     return () => {
       console.log('unmount and cancel running axios request');
       signal.current.cancel('Operation canceled by the user.');
     };
-  }, [user, setFeed])
+  }, [setFeed])
 
   if (loading) {
     return <Loader />;

@@ -79,58 +79,6 @@ function authController() {
     })();
   }
 
-  // function signup (req, res){
-  //   const { fullname, username, email, password } = req.body;
-  
-  //   const user = await User.create({ fullname, username, email, password });
-  
-  //   const token = user.getJwtToken();
-  
-  //   res.status(200).json({ success: true, token });
-  // };
-
-  // function login(req, res) {
-  //   (async function auth() {
-  //     try {
-  //       const { email, password } = req.body;
-
-  //       // make sure the email, pw is not empty
-  //       if (!email || !password) {
-  //         return next({
-  //           message: "Please provide email and password",
-  //           statusCode: 400,
-  //         });
-  //       }
-
-  //       // check if the user exists
-  //       const user = await User.findOne({ email });
-
-  //       if (!user) {
-  //         return next({
-  //           message: "This email is not yet registered",
-  //           statusCode: 400,
-  //         });
-  //       }
-
-  //       // if exists, make sure the password matches
-  //       const match = await user.checkPassword(password);
-
-  //       if (!match) {
-  //         return next({ message: "The password does not match", statusCode: 400 });
-  //       }
-  //       const token = user.getJwtToken();
-
-  //       // then send json web token as response
-  //       res.status(200).json({ success: true, token });
-  //     } catch (err) {
-  //       console.log(err.stack);
-  //       res.status(500).json({
-  //         message: "Internal Server Error",
-  //       });
-  //     }
-  //   })();
-  // };
-
   // sign out
   function signOut(req, res) {
     req.logout();
@@ -179,35 +127,6 @@ function authController() {
     })();
   }
 
-  function addFollowing(req, res) {
-    (async function update() {
-      try {
-        const username = req.params;
-        const id = req.body.userId
-        console.log('user', id, username)
-
-        // const update = await User.findOne(username, { new: true }).exec()
-        // console.log(update)
-
-        User.findOneAndUpdate(username, { $addToSet: { following: id } })
-          .then(user => {
-            console.log('user', user)
-            // user.followingCount = user.following.length+1
-
-            // user.save().then(resp => {
-            //   console.log('updated', resp.following, resp.followingCount)
-
-            res.status(200).json(user)
-            //})
-            //.catch(err => console.log(`Oops! ${err.stack}`))
-          })
-          .catch(err => console.log(`Oops! ${err.stack}`))
-      } catch (err) {
-        debug(err.stack)
-      }
-    }());
-  }
-
   return {
     signUpWithEmail,
     signOut,
@@ -216,15 +135,3 @@ function authController() {
 }
 
 module.exports = authController;
-
-
-// exports.me = asyncHandler(async (req, res, next) => {
-//   const { avatar, username, fullname, email, _id, website, bio } = req.user;
-
-//   res
-//     .status(200)
-//     .json({
-//       success: true,
-//       data: { avatar, username, fullname, email, _id, website, bio },
-//     });
-// });

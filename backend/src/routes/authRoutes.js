@@ -1,7 +1,7 @@
 const express = require("express");
 const authRouter = express.Router();
 const passport = require('passport');
-const authController = require("../controllers/auth");
+const authController = require("../controllers/authController");
 
 function router() {
     const { signUpWithEmail, signOut } = authController()

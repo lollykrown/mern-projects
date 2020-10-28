@@ -37,7 +37,7 @@ const sessionOptions = {
     //secure: true,
     path: '/',
     httpOnly: true,
-    maxAge: 120000 // 60 x 1000sec
+    maxAge: 480000 // 60 x 1000sec
   },
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
   name: 'id',

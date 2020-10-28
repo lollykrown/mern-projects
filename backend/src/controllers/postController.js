@@ -15,7 +15,7 @@ function postsController() {
     } else {
       // You are not logged in
       console.log('You need to log in first')
-      res.status(400).json({ status:false, message: 'You need to log in first' })
+      res.status(400).json({ status: false, message: 'You need to log in first' })
     }
   }
 
@@ -32,6 +32,7 @@ function postsController() {
       } catch (err) {
         console.log(err.stack);
         res.status(500).json({
+          status: false,
           message: "Internal Server Error",
         });
       }
@@ -42,118 +43,144 @@ function postsController() {
     (async function get() {
       try {
         const post = await Post.findById(req.params.id)
-        .populate({
-          path: "comments",
-          select: "text",
-          populate: {
+          .populate({
+            path: "comments",
+            select: "text",
+            populate: {
+              path: "user",
+              select: "username avatar",
+            },
+          })
+          .populate({
             path: "user",
             select: "username avatar",
-          },
-        })
-        .populate({
-          path: "user",
-          select: "username avatar",
-        })
-        .lean()
-        .exec();
+          })
+          .lean()
+          .exec();
 
 
-  if (!post) {
-    return next({
-      message: `No post found for id ${req.params.id}`,
-      statusCode: 404,
-    });
-  }
+        if (!post) {
+          return next({
+            message: `No post found for id ${req.params.id}`,
+            statusCode: 404,
+          });
+        }
 
-    // is the post belongs to loggedin user?
-    post.isMine = req.user.id === post.user._id.toString();
+        // is the post belongs to loggedin user?
+        post.isMine = req.user.id === post.user._id.toString();
 
-    // is the loggedin user liked the post??
-    const likes = post.likes.map((like) => like.toString());
-    post.isLiked = likes.includes(req.user.id);
-  
-    // is the loggedin user liked the post??
-    const savedPosts = req.user.savedPosts.map((post) => post.toString());
-    post.isSaved = savedPosts.includes(req.params.id);
-  
-    // is the comment on the post belongs to the logged in user?
-    post.comments.forEach((comment) => {
-      comment.isCommentMine = false;
-  
-      const userStr = comment.user._id.toString();
-      if (userStr === req.user.id) {
-        comment.isCommentMine = true;
+        // is the loggedin user liked the post??
+        const likes = post.likes.map((like) => like.toString());
+        post.isLiked = likes.includes(req.user.id);
+
+        // is the loggedin user liked the post??
+        const savedPosts = req.user.savedPosts.map((post) => post.toString());
+        post.isSaved = savedPosts.includes(req.params.id);
+
+        // is the comment on the post belongs to the logged in user?
+        post.comments.forEach((comment) => {
+          comment.isCommentMine = false;
+
+          const userStr = comment.user._id.toString();
+          if (userStr === req.user.id) {
+            comment.isCommentMine = true;
+          }
+        });
+
+        res.status(200).json({ success: true, data: post });
+
+      } catch (err) {
+        console.log(err.stack);
+        res.status(500).json({
+          message: "Internal Server Error",
+        });
       }
-    });
-  
-    res.status(200).json({ success: true, data: post });
-
-  } catch (err) {
-    console.log(err.stack);
-    res.status(500).json({
-      message: "Internal Server Error",
-    });
+    })();
   }
-})();
-}
+
+  function addPost(req, res) {
+    (async function add() {
+      try {
+        const { caption, files, tags } = req.body;
+        const user = req.user.id;
+
+        let post = await Post.create({ caption, files, tags, user });
+
+        await User.findByIdAndUpdate(req.user.id, {
+          $push: { posts: post._id },
+          $inc: { postCount: 1 },
+        });
+
+        post = await post
+          .populate({ path: "user", select: "avatar username fullname" })
+          .execPopulate();
+
+        res.status(200).json({
+          status: true,
+          data: post
+        });
+      } catch (err) {
+        console.log(err.stack);
+        res.status(500).json({
+          status: false,
+          message: "Internal Server Error",
+        });
+      }
+    })();
+  }
+
+  function deletePost(req, res) {
+    (async function post() {
+      try {
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+          return res.status(404).json({
+            message: `No post found for id ${req.params.id}`,
+            status: false,
+          });
+        }
+
+        if (post.user.toString() !== req.user.id) {
+          return res.status(401).json({
+            message: "You are not authorized to delete this post",
+            status: false,
+          });
+        }
+
+        await User.findByIdAndUpdate(req.user.id, {
+          $pull: { posts: req.params.id },
+          $inc: { postCount: -1 },
+        });
+
+        await post.remove();
+
+        res.status(200).json({ 
+          status: true, 
+          data: {} 
+        });
+      } catch (err) {
+        console.log(err.stack);
+        res.status(500).json({
+          status: false,
+          message: "Internal Server Error",
+        });
+      }
+    })();
+  }
+
   return {
     isUserSignedIn,
     getPosts,
     getPostById,
-    // getTweetsByAUser,
-    // updateLikesById,
+    addPost,
+    deletePost,
     // updateRetweetsById,
     // deleteTweetById,
   };
 }
 
 module.exports = postsController
-
-
-// exports.deletePost = asyncHandler(async (req, res, next) => {
-//   const post = await Post.findById(req.params.id);
-
-//   if (!post) {
-//     return next({
-//       message: `No post found for id ${req.params.id}`,
-//       statusCode: 404,
-//     });
-//   }
-
-//   if (post.user.toString() !== req.user.id) {
-//     return next({
-//       message: "You are not authorized to delete this post",
-//       statusCode: 401,
-//     });
-//   }
-
-//   await User.findByIdAndUpdate(req.user.id, {
-//     $pull: { posts: req.params.id },
-//     $inc: { postCount: -1 },
-//   });
-
-//   await post.remove();
-
-//   res.status(200).json({ success: true, data: {} });
-// });
-
-// exports.addPost = asyncHandler(async (req, res, next) => {
-//   const { caption, files, tags } = req.body;
-//   const user = req.user.id;
-
-//   let post = await Post.create({ caption, files, tags, user });
-
-//   await User.findByIdAndUpdate(req.user.id, {
-//     $push: { posts: post._id },
-//     $inc: { postCount: 1 },
-//   });
-
-//   post = await post
-//     .populate({ path: "user", select: "avatar username fullname" })
-//     .execPopulate();
-
-//   res.status(200).json({ success: true, data: post });
-// });
 
 // exports.toggleLike = asyncHandler(async (req, res, next) => {
 //   // make sure that the post exists

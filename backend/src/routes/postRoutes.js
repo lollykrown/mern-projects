@@ -1,17 +1,17 @@
 const express = require("express");
 const postRouter = express.Router();
-const postsController = require('../controllers/postsController')
+const postsController = require('../controllers/postController')
 
 
 function router() {
 
-  const { isUserSignedIn, getPosts, getPostById } = postsController()
+  const { isUserSignedIn, getPosts, getPostById, addPost, deletePost } = postsController()
 
   // Check if user is logged in 
   postRouter.use(isUserSignedIn);
 
 
-  postRouter.route("/").get(getPosts) //.post(protect, addPost);
+  postRouter.route("/").get(getPosts).post(addPost);
   // router.route("/search").get(searchPost);
   postRouter.route("/:id").get(getPostById) //.delete(protect, deletePost);
   // router.route("/:id/togglelike").get(protect, toggleLike);

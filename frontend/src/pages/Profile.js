@@ -61,7 +61,7 @@ const Profile = () => {
         if (res.data.status) {
           setLoading(false);
           setDeadend(false);
-          setProfile(res.data);
+          setProfile(res.data.data);
         }
       } catch (error) {
         if (axios.isCancel(error)) {
