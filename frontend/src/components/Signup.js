@@ -53,14 +53,17 @@ const Signup = (props) => {
         cancelToken: signal.current.token
       })
 
-      console.log(res.data)
-      res.data.status && props.history.replace('/')
-
       if (!res.status) {
         //console.log(res.message)
         toast.error(res.data.message)
         return;
       }
+
+      console.log(res.data)
+      res.data.status && toast.info('You have been registered, click on login to sign in')
+      // res.data.status && props.history.replace('/login')
+      // return props.login
+
     } catch (err) {
       if (axios.isCancel(e)) {
         console.log('Get request canceled');
@@ -70,17 +73,6 @@ const Signup = (props) => {
         toast.error(err.message)
       }
     }
-
-    // try {
-    //   const { token } = await client("/auth/signup", { body });
-    //   localStorage.setItem("token", token);
-    // } catch (err) {
-    //   return toast.error(err.message);
-    // }
-
-    // const user = await client("/auth/me");
-    // setUser(user.data);
-    // localStorage.setItem("user", JSON.stringify(user.data));
 
     fullname.setValue("");
     username.setValue("");

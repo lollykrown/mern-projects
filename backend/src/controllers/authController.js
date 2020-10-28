@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const asyncHandler = require("../middlewares/asyncHandler");
+const bcrypt = require("bcryptjs");
 
 function authController() {
   // Sign up with email address
@@ -55,8 +55,7 @@ function authController() {
               email,
               password,
               username,
-              profileName,
-              profilePictureUrl
+              fullname,
             });
             user.save().then((newUser) => {
               console.log(newUser);

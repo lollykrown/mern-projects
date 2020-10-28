@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Avatar from "../styles/Avatar";
 import Follow from "./Follow";
-import { client } from "../utils";
 import Loader from "./Loader";
 import { toast } from "react-toastify";
 import axios from 'axios'

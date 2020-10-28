@@ -88,7 +88,6 @@ const Login = (props) => {
       // res.data.status && props.history.replace('/')
       setUser(res.data.data);
       toast.success("Login successful");
-
     } catch (err) {
       if (axios.isCancel(e)) {
         console.log('Get request canceled');
