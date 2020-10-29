@@ -136,16 +136,16 @@ const Signup = ({ login, signupUser }) => {
           />
         </div>
         <input
-          type="text"
-          placeholder="username"
-          value={username.value}
-          onChange={username.onChange}
-        />
-        <input
           type="email"
           placeholder="email"
           value={email.value}
           onChange={email.onChange}
+        />
+        <input
+          type="text"
+          placeholder="username"
+          value={username.value}
+          onChange={username.onChange}
         />
         <div className="input-group">
           <input
