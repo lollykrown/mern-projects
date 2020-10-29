@@ -75,13 +75,11 @@ export const uploadImage = (file) => {
   // data.append("signature", 'bfd09f95f331f558cbd1320e67aa8d488770583e');
   data.append("upload_preset", "instaclone");
 
-  return fetch(process.env.REACT_APP_CLOUDINARY_URL, {
-    method:'POST',
-    body:data
+  return axios.post(process.env.REACT_APP_CLOUDINARY_URL, data)
     // headers: {
     //   'Content-Type': 'application/json'
     // },
     // withCredentials: true,
     // cancelToken: signal.current.token
-  }).then((res) => res.json());
+  //).then((res) => res.json());
 };

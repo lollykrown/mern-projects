@@ -102,7 +102,7 @@ const ProfileForm = () => {
 
   const handleRequest = async (b) => {
     try {
-      const res = await axios.patch('http://localhost:8001/users', b, {
+      const res = await axios.put('http://localhost:8001/users', b, {
         headers: {
           'Content-Type': 'application/json'
         },
@@ -128,7 +128,7 @@ const ProfileForm = () => {
   const handleImageUpload = (e) => {
     if (e.target.files[0]) {
       uploadImage(e.target.files[0]).then((res) =>
-        setNewAvatar(res.secure_url)
+        setNewAvatar(res.data.secure_url)
       );
     }
   };

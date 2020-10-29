@@ -5,7 +5,7 @@ function userController() {
 
   function isUserSignedIn(req, res, next) {
     if (req.user) {
-      console.log(req.isAuthenticated())
+      console.log('auth',req.isAuthenticated())
       console.log('You are logged in')
       console.log(req.cookies)
       next();
@@ -21,7 +21,7 @@ function userController() {
       try {
         let users = await User.find().select("-password").lean().exec();
 
-        console.log('passport', req.user)
+        // console.log('passport', req.user)
 
         users.forEach((user) => {
           user.isFollowing = false;
@@ -32,7 +32,6 @@ function userController() {
         });
 
         users = users.filter((user) => user._id.toString() !== req.user.id);
-        console.log(users)
         res.status(200).json({ status: true, data: users });
       } catch (err) {
         console.log(err.stack);

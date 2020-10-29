@@ -67,7 +67,7 @@ const NewPost = () => {
 
       uploadImage(e.target.files[0]).then((res) => {
         console.log('cloudinary',res)
-        setPostImage(res.secure_url);
+        setPostImage(res.data.secure_url);
       });
     }
   };

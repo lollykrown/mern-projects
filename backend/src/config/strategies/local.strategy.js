@@ -22,7 +22,7 @@ module.exports = function localStrategy() {
                 message: 'Incorrect username'
               });
             }
-            console.log(result)
+            // console.log(result)
             bcrypt.compare(password, result.password).then(valid => {
               console.log(valid)
               if (!valid) {

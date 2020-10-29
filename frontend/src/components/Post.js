@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import LikePost from "./LikePost";
@@ -138,14 +138,14 @@ const Post = ({ post }) => {
 
   const signal = useRef(axios.CancelToken.source());
 
-  const handleRequest = async (id) => {
+  const handleRequest = async (newc, id) => {
     try {
       const res = await axios.post(`http://localhost:8001/posts/${id}/comments`, { text: comment.value }, {
         withCredentials: true,
         cancelToken: signal.current.token
       })
-      console.log(res)
-      setNewComments([...newComments, res.data.data]);
+      console.log('comments', res.data)
+      setNewComments([...newc, res.data.data]);
 
     } catch (err) {
       if (axios.isCancel(err)) {
@@ -157,10 +157,11 @@ const Post = ({ post }) => {
       }
     }
   };
+
   const handleAddComment = (e) => {
     if (e.keyCode === 13) {
       e.preventDefault();
-      handleRequest(post._id)
+      handleRequest(newComments, post._id)
       comment.setValue("");
     }
   };
@@ -235,12 +236,12 @@ const Post = ({ post }) => {
           </span>
         )}
 
-        {post.comments?.slice(0, 2).map((comment) => (
-          <Comment key={comment._id} hideavatar={true} comment={comment} />
+        {post.comments.slice(0, 2).map((c) => (
+          <Comment key={c._id} hideavatar={true} comment={c} />
         ))}
 
-        {newComments.map((comment) => (
-          <Comment key={comment._id} hideavatar={true} comment={comment} />
+        {newComments.map((c) => (
+          <Comment key={c._id} hideavatar={true} comment={c} />
         ))}
 
         <span className="secondary">{timeSince(post?.createdAt)} ago</span>

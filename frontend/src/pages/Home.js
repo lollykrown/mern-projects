@@ -73,7 +73,7 @@ const Home = (props) => {
           withCredentials:true,
           cancelToken: signal.current.token })
 
-          console.log('posts', res)
+          console.log('posts posts', res)
           setFeed(res.data.data)
           setLoading(false);
       } catch (error) {

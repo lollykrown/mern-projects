@@ -7,6 +7,7 @@ function postsController() {
   function isUserSignedIn(req, res, next) {
     if (req.user) {
       console.log(req.isAuthenticated())
+      // console.log(req.isUnAuthenticated())
       console.log('You are logged in')
       console.log(req.cookies)
       next();
@@ -21,8 +22,16 @@ function postsController() {
     (async function post() {
       try {
         const posts = await Post.find({})
-        .sort({createdAt:-1})
-        .populate({ path: 'user', select: 'avatar username' }).exec();
+          .sort({ createdAt: -1 })
+          .populate({
+            path: "comments",
+            select: "text",
+            populate: {
+              path: "user",
+              select: "username avatar",
+            },
+          })
+          .populate({ path: 'user', select: 'avatar username' }).exec();
 
         res.status(200).json({
           status: true,
@@ -169,7 +178,6 @@ function postsController() {
     })();
   }
 
-
   function addComment(req, res) {
     (async function post() {
       try {
@@ -196,9 +204,176 @@ function postsController() {
           .populate({ path: "user", select: "avatar username fullname" })
           .execPopulate();
 
-        res.status(200).json({ 
-          status: true, 
-          data: comment 
+        res.status(200).json({
+          status: true,
+          data: comment
+        });
+      } catch (err) {
+        console.log(err.stack);
+        res.status(500).json({
+          status: false,
+          message: "Internal Server Error",
+        });
+      }
+    })();
+  }
+
+  function toggleLike(req, res) {
+    (async function post() {
+      try {
+        // make sure that the post exists
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+          return res.status(404).json({
+            message: `No post found for id ${req.params.id}`,
+            status: false
+          });
+        }
+
+        if (post.likes.includes(req.user.id)) {
+          const index = post.likes.indexOf(req.user.id);
+          post.likes.splice(index, 1);
+          post.likesCount = post.likesCount - 1;
+          await post.save();
+        } else {
+          post.likes.push(req.user.id);
+          post.likesCount = post.likesCount + 1;
+          await post.save();
+        }
+
+        res.status(200).json({
+          status: true,
+          data: {}
+        });
+      } catch (err) {
+        console.log(err.stack);
+        res.status(500).json({
+          status: false,
+          message: "Internal Server Error",
+        });
+      }
+    })();
+  }
+
+  function deleteComment(req, res) {
+    (async function del() {
+      try {
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+          return res.status(404).json({
+            message: `No post found for id ${req.params.id}`,
+            status: false,
+          });
+        }
+
+        const comment = await Comment.findOne({
+          _id: req.params.commentId,
+          post: req.params.id,
+        });
+
+        if (!comment) {
+          return res.status(404).json({
+            message: `No comment found for id ${req.params.id}`,
+            status: false,
+          });
+        }
+
+        if (comment.user.toString() !== req.user.id) {
+          return res.status(401).json({
+            message: "You are not authorized to delete this comment",
+            status: false,
+          });
+        }
+
+        // remove the comment from the post
+        const index = post.comments.indexOf(comment._id);
+        post.comments.splice(index, 1);
+        post.commentsCount = post.commentsCount - 1;
+        await post.save();
+
+        await comment.remove();
+
+        res.status(200).json({
+          status: true,
+          data: {}
+        });
+      } catch (err) {
+        console.log(err.stack);
+        res.status(500).json({
+          status: false,
+          message: "Internal Server Error",
+        });
+      }
+    })();
+  }
+
+  function searchPost(req, res) {
+    (async function del() {
+      try {
+        if (!req.query.caption && !req.query.tag) {
+          return res.status(400).json({
+            message: "Please enter either caption or tag to search for",
+            status: false,
+          });
+        }
+
+        let posts = [];
+
+        if (req.query.caption) {
+          const regex = new RegExp(req.query.caption, "i");
+          posts = await Post.find({ caption: regex });
+        }
+
+        if (req.query.tag) {
+          posts = posts.concat([await Post.find({ tags: req.query.tag })]);
+        }
+
+        res.status(200).json({
+          status: true,
+          data: posts
+        });
+      } catch (err) {
+        console.log(err.stack);
+        res.status(500).json({
+          status: false,
+          message: "Internal Server Error",
+        });
+      }
+    })();
+  }
+
+  function toggleSave(req, res) {
+    (async function del() {
+      try {
+        // make sure that the post exists
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+          return res.status(404).json({
+            message: `No post found for id ${req.params.id}`,
+            status: false,
+          });
+        }
+
+        const { user } = req;
+
+        if (user.savedPosts.includes(req.params.id)) {
+          console.log("removing saved post");
+          await User.findByIdAndUpdate(user.id, {
+            $pull: { savedPosts: req.params.id },
+          });
+        } else {
+          console.log("saving post");
+          await User.findByIdAndUpdate(user.id, {
+            $push: { savedPosts: req.params.id },
+          });
+        }
+
+        res.status(200).json({
+          status: true,
+          data: {}
         });
       } catch (err) {
         console.log(err.stack);
@@ -217,123 +392,11 @@ function postsController() {
     addPost,
     deletePost,
     addComment,
-    // deleteTweetById,
+    toggleLike,
+    deleteComment,
+    searchPost,
+    toggleSave
   };
 }
 
 module.exports = postsController
-
-// exports.toggleLike = asyncHandler(async (req, res, next) => {
-//   // make sure that the post exists
-//   const post = await Post.findById(req.params.id);
-
-//   if (!post) {
-//     return next({
-//       message: `No post found for id ${req.params.id}`,
-//       statusCode: 404,
-//     });
-//   }
-
-//   if (post.likes.includes(req.user.id)) {
-//     const index = post.likes.indexOf(req.user.id);
-//     post.likes.splice(index, 1);
-//     post.likesCount = post.likesCount - 1;
-//     await post.save();
-//   } else {
-//     post.likes.push(req.user.id);
-//     post.likesCount = post.likesCount + 1;
-//     await post.save();
-//   }
-
-//   res.status(200).json({ success: true, data: {} });
-// });
-
-// exports.deleteComment = asyncHandler(async (req, res, next) => {
-//   const post = await Post.findById(req.params.id);
-
-//   if (!post) {
-//     return next({
-//       message: `No post found for id ${req.params.id}`,
-//       statusCode: 404,
-//     });
-//   }
-
-//   const comment = await Comment.findOne({
-//     _id: req.params.commentId,
-//     post: req.params.id,
-//   });
-
-//   if (!comment) {
-//     return next({
-//       message: `No comment found for id ${req.params.id}`,
-//       statusCode: 404,
-//     });
-//   }
-
-//   if (comment.user.toString() !== req.user.id) {
-//     return next({
-//       message: "You are not authorized to delete this comment",
-//       statusCode: 401,
-//     });
-//   }
-
-//   // remove the comment from the post
-//   const index = post.comments.indexOf(comment._id);
-//   post.comments.splice(index, 1);
-//   post.commentsCount = post.commentsCount - 1;
-//   await post.save();
-
-//   await comment.remove();
-
-//   res.status(200).json({ success: true, data: {} });
-// });
-
-// exports.searchPost = asyncHandler(async (req, res, next) => {
-//   if (!req.query.caption && !req.query.tag) {
-//     return next({
-//       message: "Please enter either caption or tag to search for",
-//       statusCode: 400,
-//     });
-//   }
-
-//   let posts = [];
-
-//   if (req.query.caption) {
-//     const regex = new RegExp(req.query.caption, "i");
-//     posts = await Post.find({ caption: regex });
-//   }
-
-//   if (req.query.tag) {
-//     posts = posts.concat([await Post.find({ tags: req.query.tag })]);
-//   }
-
-//   res.status(200).json({ success: true, data: posts });
-// });
-
-// exports.toggleSave = asyncHandler(async (req, res, next) => {
-//   // make sure that the post exists
-//   const post = await Post.findById(req.params.id);
-
-//   if (!post) {
-//     return next({
-//       message: `No post found for id ${req.params.id}`,
-//       statusCode: 404,
-//     });
-//   }
-
-//   const { user } = req;
-
-//   if (user.savedPosts.includes(req.params.id)) {
-//     console.log("removing saved post");
-//     await User.findByIdAndUpdate(user.id, {
-//       $pull: { savedPosts: req.params.id },
-//     });
-//   } else {
-//     console.log("saving post");
-//     await User.findByIdAndUpdate(user.id, {
-//       $push: { savedPosts: req.params.id },
-//     });
-//   }
-
-//   res.status(200).json({ success: true, data: {} });
-// });
