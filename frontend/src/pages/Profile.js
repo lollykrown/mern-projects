@@ -17,7 +17,9 @@ const Wrapper = styled.div`
     justify-content: center;
     margin: 1.4rem 0;
   }
-
+.uppercase{
+  text-transform: uppercase;
+}
   .profile-tab div {
     display: flex;
     cursor: pointer;
@@ -108,14 +110,14 @@ const Profile = () => {
           onClick={() => setTab("POSTS")}
         >
           <PostIcon />
-          <span>Posts</span>
+          <span className="uppercase">Posts</span>
         </div>
         <div
           style={{ fontWeight: tab === "SAVED" ? "500" : "" }}
           onClick={() => setTab("SAVED")}
         >
           <SavedIcon />
-          <span>Saved</span>
+          <span className="uppercase">Saved</span>
         </div>
       </div>
 

@@ -96,7 +96,7 @@ function postsController() {
           }
         });
 
-        res.status(200).json({ success: true, data: post });
+        res.status(200).json({ status: true, data: post });
 
       } catch (err) {
         console.log(err.stack);

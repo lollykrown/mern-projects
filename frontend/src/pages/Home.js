@@ -9,7 +9,6 @@ import { UserContext } from "../context/UserContext";
 import { toast } from "react-toastify";
 import axios from 'axios'
 import { useHistory } from "react-router-dom";
-import Auth from "../components/Auth";
 
 const Wrapper = styled.div`
   @media screen and (max-width: 1040px) {
@@ -27,11 +26,7 @@ const Home = () => {
   const signal = useRef(axios.CancelToken.source());
 
   const history = useHistory();
-  // console.log('history in home', history)
-
-  const renderLogin = () => {
-    return <Auth/>
-  }
+  
   useEffect(() => {
     const checkAuthStatus = async () => {    
   
@@ -40,8 +35,7 @@ const Home = () => {
           withCredentials:true,
           cancelToken: signal.current.token 
         })
-
-          console.log('checking', res)
+          // console.log('checking', res)
 
           if(!res.data.status){
             localStorage.removeItem("user");
@@ -70,7 +64,6 @@ const Home = () => {
       signal.current.cancel('Operation canceled by the user.');
     };
   }, [setUser])
-
 
   useEffect(() => {
 

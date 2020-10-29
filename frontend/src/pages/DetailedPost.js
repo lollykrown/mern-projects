@@ -10,7 +10,6 @@ import Loader from "../components/Loader";
 import Modal from "../components/Modal";
 import { ModalContent } from "../components/Post";
 import useInput from "../hooks/useInput";
-import { client } from "../utils";
 import { timeSince } from "../utils";
 import { MoreIcon, CommentIcon, InboxIcon } from "../components/Icons";
 import axios from "axios";
@@ -158,16 +157,16 @@ const DetailedPost = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const handleRequest = async (newc, id) => {
+    const handleRequest = async (id) => {
       try {
         const res = await axios.get(`http://localhost:8001/posts/${id}`, {
           withCredentials: true,
           cancelToken: signal.current.token
         })
         console.log('comments', res.data)
-        setPost(res.data);
-        setComments(res.data.comments);
-        setLikes(res.data.likesCount);
+        setPost(res.data.data);
+        setComments(res.data.data.comments);
+        setLikes(res.data.data.likesCount);
         setLoading(false);
         setDeadend(false);
 

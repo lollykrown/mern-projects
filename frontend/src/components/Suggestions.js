@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   margin-top: 1rem;
   position: fixed;
   top: 6rem;
-  left: 64.5%;
+  left: 66%;
 
   .suggestions {
     margin-top: 1.8rem;
@@ -21,8 +21,8 @@ const Wrapper = styled.div`
     width: 230px;
   }
 
-  .suggestions > h3 {
-    margin-bottom: 0.5rem;
+  .suggestions > h4 {
+    margin-bottom: 0.35rem;
   }
 
   .suggestions-usercard {
@@ -44,11 +44,11 @@ const Wrapper = styled.div`
 
   span {
     color: ${(props) => props.theme.blue};
-    font-weight: 500;
+    font-weight: 400;
   }
 
   @media screen and (max-width: 1095px) {
-    left: 67%;
+    left: 67.5%;
   }
 
   @media screen and (max-width: 1040px) {
@@ -80,12 +80,12 @@ export const UserCard = ({ user }) => {
       />
 
       <div className="user-info">
-        <h3
+        <h4
           className="pointer"
           onClick={() => history.push(`/${user.username}`)}
         >
           {user.username}
-        </h3>
+        </h4>
         <span>{user.fullname}</span>
       </div>
     </StyledUserCard>

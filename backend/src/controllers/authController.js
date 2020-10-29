@@ -81,17 +81,17 @@ function authController() {
   // sign out
   function signOut(req, res) {
     req.logout();
-    if (req.session) req.session.destroy();
-    res.clearCookie("connect.sid");
+    if (req.session)req.session.destroy();
+    res.clearCookie("_sid");
     debug("you are now logged out");
-    // app.use(function (req, res, next) {
-    //   if (!req.user)
-    //     res.header(
-    //       "Cache-Control",
-    //       "private, no-cache, no-store, must-revalidate"
-    //     );
-    //   next();
-    // });
+    app.use(function (req, res, next) {
+      if (!req.user)
+        res.header(
+          "Cache-Control",
+          "private, no-cache, no-store, must-revalidate"
+        );
+      next();
+    });
     res.json({ message: "logged out" });
   }
 
