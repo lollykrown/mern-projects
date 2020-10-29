@@ -52,15 +52,14 @@ const Profile = () => {
 
   useEffect(() => {
 
+    const s = signal
     const getUser = async () => {
 
       try {
         const res = await axios.get(`http://localhost:8001/users/${username}`, {
           withCredentials: true,
-          cancelToken: signal.current.token
+          cancelToken: s.current.token
         })
-
-        console.log('user profile', res)
         if (res.data.status) {
           setLoading(false);
           setDeadend(false);
@@ -79,7 +78,7 @@ const Profile = () => {
     getUser()
     return () => {
       console.log('unmount and cancel running axios request');
-      signal.current.cancel('Operation canceled by the user.');
+      s.current.cancel('Operation canceled by the user.');
     };
   }, [username])
 

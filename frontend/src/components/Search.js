@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import axios from 'axios'
 import { useHistory } from "react-router-dom";
@@ -45,6 +44,7 @@ overflow-x:scroll;
   background-color: rgba(0,0,0,0.025);
 }
 `;
+
 const Search = () => {
   const history = useHistory();
 
@@ -55,12 +55,14 @@ const Search = () => {
   const signal = useRef(axios.CancelToken.source());
 
   useEffect(() => {
+    const s = signal;
+
     const loadUsers = async () => {
 
       try {
         const res = await axios.get('http://localhost:8001/users', {
           withCredentials: true,
-          cancelToken: signal.current.token
+          cancelToken: s.current.token
         })
 
         setUsers(res.data.data);
@@ -77,7 +79,7 @@ const Search = () => {
     loadUsers()
     return () => {
       console.log('unmount and cancel running axios request');
-      signal.current.cancel('Operation canceled by the user.');
+      s.current.cancel('Operation canceled by the user.');
     };
   }, [])
 
@@ -96,12 +98,6 @@ const Search = () => {
   }
 
   console.log(filtered)
-  const handleSearch = (e) => {
-    if (e.keyCode === 13) {
-      search.setValue("");
-      return toast.success("Sorry, the search feature isn't finished yet");
-    }
-  };
 
   return (
     <>
@@ -115,8 +111,11 @@ const Search = () => {
         aria-label="Search"
       />
       {search.length > 0 && filtered.map((u) => (
-        <SearchWrapper>
-          <div className="user-info" key={u._id} onClick={() => history.push(`/${u.username}`)}>
+        <SearchWrapper key={u._id} onClick={() => {
+          history.push(`/${u.username}`)
+          setSearch('')
+          }}>
+          <div className="user-info">
             <Avatar
               className="pointer"
               src={u?.avatar}

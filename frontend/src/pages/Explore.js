@@ -11,12 +11,13 @@ const Explore = () => {
 
   useEffect(() => {
 
+    const s = signal
     const getPosts = async () => {    
   
       try {
         const res = await axios.get('http://localhost:8001/posts',  {
           withCredentials:true,
-          cancelToken: signal.current.token })
+          cancelToken: s.current.token })
 
           console.log('posts', res)
           setPosts(res.data.data);
@@ -34,7 +35,7 @@ const Explore = () => {
     getPosts()
     return () => {
       console.log('unmount and cancel running axios request');
-      signal.current.cancel('Operation canceled by the user.');
+      s.current.cancel('Operation canceled by the user.');
     };
   }, [])
 

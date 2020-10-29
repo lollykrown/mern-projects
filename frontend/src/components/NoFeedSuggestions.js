@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
-import styled from "styled-components";
 import Avatar from "../styles/Avatar";
 import Follow from "./Follow";
 import Loader from "./Loader";
@@ -17,11 +16,12 @@ const NoFeedSuggestions = () => {
   const signal = useRef(axios.CancelToken.source());
 
   useEffect(() => {
+    const s = signal;
     const getUsers = async () => {
       try {
         const res = await axios.get('http://localhost:8001/users', {
           withCredentials: true,
-          cancelToken: signal.current.token
+          cancelToken: s.current.token
         })
 
         console.log('suggestions', res)
@@ -41,7 +41,7 @@ const NoFeedSuggestions = () => {
     getUsers()
     return () => {
       console.log('unmount and cancel running axios request');
-      signal.current.cancel('Operation canceled by the user.');
+      s.current.cancel('Operation canceled by the user.');
     };
   }, [])
 

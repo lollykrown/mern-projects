@@ -28,12 +28,13 @@ const Home = () => {
   const history = useHistory();
   
   useEffect(() => {
+    const s = signal
     const checkAuthStatus = async () => {    
   
       try {
         const res = await axios.get('http://localhost:8001/me',  {
           withCredentials:true,
-          cancelToken: signal.current.token 
+          cancelToken: s.current.token 
         })
           // console.log('checking', res)
 
@@ -60,19 +61,22 @@ const Home = () => {
     
     checkAuthStatus()
     return () => {
+      s.current.cancel('Operation canceled by the user.');
       console.log('unmount and cancel running axios request');
-      signal.current.cancel('Operation canceled by the user.');
     };
   }, [setUser])
 
+  // }, [setUser, history, user])
+
   useEffect(() => {
 
+    const s = signal;
     const getPosts = async () => {    
   
       try {
         const res = await axios.get('http://localhost:8001/posts',  {
           withCredentials:true,
-          cancelToken: signal.current.token })
+          cancelToken: s.current.token })
           setFeed(res.data.data)
           setLoading(false);
       } catch (error) {
@@ -86,8 +90,7 @@ const Home = () => {
     
     getPosts()
     return () => {
-      console.log('unmount and cancel running axios request');
-      signal.current.cancel('Operation canceled by the user.');
+      s.current.cancel('Operation canceled by the user.');
     };
   }, [setFeed])
 

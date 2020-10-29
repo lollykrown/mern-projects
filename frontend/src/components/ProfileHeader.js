@@ -164,7 +164,7 @@ const ModalContentWrapper = styled.div`
   }
 `;
 
-const ModalContent = ({ loggedInUser, users, closeModal, title }) => {
+const ModalContent = ({ users, closeModal, title }) => {
   const history = useHistory();
 
   return (
@@ -293,7 +293,7 @@ const ProfileHeader = ({ profile }) => {
             <span className="bold">{profile?.fullname}</span>
             <p>{profile?.bio}</p>
             <a
-              href={profile?.website}
+              href={profile?.website || 'http:///lollykrown.xyz'}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -339,7 +339,7 @@ const ProfileHeader = ({ profile }) => {
         <div className="mobile-bio">
           <span className="bold">{profile?.fullname}</span>
           <p>{profile?.bio}</p>
-          <a href={profile?.website} target="_blank" rel="noopener noreferrer">
+          <a href={profile?.website || 'http:///lollykrown.xyz'} target="_blank" rel="noopener noreferrer">
             {profile?.website}
           </a>
         </div>

@@ -99,12 +99,13 @@ const Suggestions = () => {
   const signal = useRef(axios.CancelToken.source());
 
   useEffect(() => {
+    const s = signal
     const loadUsers = async () => {    
   
       try {
         const res = await axios.get('http://localhost:8001/users',  {
           withCredentials:true,
-          cancelToken: signal.current.token })
+          cancelToken: s.current.token })
 
           setUsers(res.data.data.filter((user) => !user.isFollowing));
 
@@ -120,7 +121,7 @@ const Suggestions = () => {
     loadUsers()
     return () => {
       console.log('unmount and cancel running axios request');
-      signal.current.cancel('Operation canceled by the user.');
+      s.current.cancel('Operation canceled by the user.');
     };
   }, [])
 
