@@ -1,5 +1,4 @@
 import axios from 'axios'
-import Post from '../components/Post';
 
 export const timeSince = (timestamp) => {
   const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
@@ -70,16 +69,8 @@ export const client = (endpoint, { body, ...customConfig } = {}) => {
 export const uploadImage = (file) => {
   const data = new FormData();
   data.append("file", file);
-  // data.append("api_key", "337486342444196");
-  // data.append("timestamp", '1315060510');
-  // data.append("signature", 'bfd09f95f331f558cbd1320e67aa8d488770583e');
   data.append("upload_preset", "instaclone");
 
   return axios.post(process.env.REACT_APP_CLOUDINARY_URL, data)
-    // headers: {
-    //   'Content-Type': 'application/json'
-    // },
-    // withCredentials: true,
-    // cancelToken: signal.current.token
   //).then((res) => res.json());
 };

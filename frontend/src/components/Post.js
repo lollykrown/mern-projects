@@ -217,7 +217,7 @@ const Post = ({ post }) => {
           </span>
         )}
 
-        <p>
+        {post && <p>
           <span
             onClick={() => history.push(`/${post.user?.username}`)}
             className="pointer username bold"
@@ -225,7 +225,7 @@ const Post = ({ post }) => {
             {post.user?.username}
           </span>
           {post.caption}
-        </p>
+        </p>}
 
         {post.commentsCount > 2 && (
           <span
@@ -236,11 +236,11 @@ const Post = ({ post }) => {
           </span>
         )}
 
-        {post.comments.slice(0, 2).map((c) => (
+        {post.comments.length > 0 && post.comments.slice(0, 2).map((c) => (
           <Comment key={c._id} hideavatar={true} comment={c} />
         ))}
 
-        {newComments.map((c) => (
+        {newComments && newComments.map((c) => (
           <Comment key={c._id} hideavatar={true} comment={c} />
         ))}
 

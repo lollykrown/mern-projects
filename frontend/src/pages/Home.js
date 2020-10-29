@@ -41,8 +41,8 @@ const Home = (props) => {
           if(!res.data.status){
             localStorage.removeItem("user");
             console.log('user',user)
+            history.push('/')
             toast.error('Your session is expired')
-            history.replace('/')
           }
 
           if(res.data.status){

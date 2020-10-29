@@ -30,7 +30,7 @@ const Comment = ({ comment, hideavatar }) => {
           onClick={() => history.push(`/${comment.user.username}`)}
           className="bold pointer"
         >
-          {comment.user.username}
+          {comment.user?.username}
         </span>
         {comment.text}
       </p>

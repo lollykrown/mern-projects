@@ -1,10 +1,11 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import useInput from "../hooks/useInput";
 import { UserContext } from "../context/UserContext";
 import logo from "../assets/logo.png";
 import axios from 'axios'
+import Loader from "./Loader";
 
 export const FormWrapper = styled.div`
   background-color: ${(props) => props.theme.white};
@@ -51,16 +52,17 @@ export const FormWrapper = styled.div`
 
 const Login = (props) => {
 
-  console.log('props', props)
   const { setUser } = useContext(UserContext);
   const username = useInput("");
   const password = useInput("");
+  const [loading, setLoading] = useState(false);
 
   const signal = useRef(axios.CancelToken.source());
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    setLoading(true)
     if (!username.value || !password.value) {
       return toast.error("Please fill in both the fields");
     }
@@ -77,16 +79,14 @@ const Login = (props) => {
       })
 
       if (!res.status) {
-        //console.log(res.message)
         toast.error(res.data.message)
         return;
       }
-      console.log(res)
       localStorage.setItem("user", JSON.stringify(res.data.data));
-
-      // res.data.status && props.history.replace('/')
       setUser(res.data.data);
       toast.success("Login successful");
+      setLoading(false);
+
     } catch (err) {
       if (axios.isCancel(err)) {
         console.log('Get request canceled');
@@ -100,6 +100,10 @@ const Login = (props) => {
     username.setValue("");
     password.setValue("");
   };
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <FormWrapper onSubmit={handleLogin}>
