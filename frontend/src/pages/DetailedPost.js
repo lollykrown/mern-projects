@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { Link, useHistory, useParams } from "react-router-dom";
 import styled from "styled-components";
 import LikePost from "../components/LikePost";
 import SavePost from "../components/SavePost";
@@ -13,6 +13,10 @@ import useInput from "../hooks/useInput";
 import { client } from "../utils";
 import { timeSince } from "../utils";
 import { MoreIcon, CommentIcon, InboxIcon } from "../components/Icons";
+import axios from "axios";
+import { toast } from "react-toastify";
+import Button from "../styles/Button";
+import PlaceholderContainer from "../styles/PlaceholderContainer";
 
 const Wrapper = styled.div`
   display: grid;
@@ -118,16 +122,35 @@ const DetailedPost = () => {
   const scrollToBottom = () =>
     commmentsEndRef.current.scrollIntoView({ behaviour: "smooth" });
 
+    const signal = useRef(axios.CancelToken.source());
+
+    const handleRequest = async (id) => {
+      try {
+        const res = await axios.post(`http://localhost:8001/posts/${id}/comments`, { text: comment.value }, {
+          withCredentials: true,
+          cancelToken: signal.current.token
+        })
+        console.log('comments', res.data)
+        setComments([...commentsState, res.data.data]);
+        scrollToBottom();
+
+      } catch (err) {
+        if (axios.isCancel(err)) {
+          console.log('Get request canceled');
+          toast.error(err.message)
+        } else {
+          console.log(err)
+          toast.error(err.message)
+        }
+      }
+    };
+
+    
   const handleAddComment = (e) => {
     if (e.keyCode === 13) {
       e.preventDefault();
 
-      client(`/posts/${post._id}/comments`, {
-        body: { text: comment.value },
-      }).then((resp) => {
-        setComments([...commentsState, resp.data]);
-        scrollToBottom();
-      });
+      handleRequest(post._id)
 
       comment.setValue("");
     }
@@ -135,15 +158,32 @@ const DetailedPost = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    client(`/posts/${postId}`)
-      .then((res) => {
+    const handleRequest = async (newc, id) => {
+      try {
+        const res = await axios.get(`http://localhost:8001/posts/${id}`, {
+          withCredentials: true,
+          cancelToken: signal.current.token
+        })
+        console.log('comments', res.data)
         setPost(res.data);
         setComments(res.data.comments);
         setLikes(res.data.likesCount);
         setLoading(false);
         setDeadend(false);
-      })
-      .catch((err) => setDeadend(true));
+
+      } catch (err) {
+        if (axios.isCancel(err)) {
+          console.log('Get request canceled');
+          toast.error(err.message)
+        } else {
+          setDeadend(true)
+          console.log(err)
+          toast.error(err.message)
+        }
+      }
+    };
+    handleRequest(postId)
+    
   }, [postId]);
 
   if (!deadend && loading) {
@@ -152,10 +192,13 @@ const DetailedPost = () => {
 
   if (deadend) {
     return (
+      <PlaceholderContainer>
       <Placeholder
         title="Sorry, this page isn't available"
         text="The link you followed may be broken, or the page may have been removed"
       />
+      <Link to="/"><Button>Home</Button></Link>
+    </PlaceholderContainer>
     );
   }
 

@@ -9,6 +9,7 @@ import { UserContext } from "../context/UserContext";
 import { toast } from "react-toastify";
 import axios from 'axios'
 import { useHistory } from "react-router-dom";
+import Auth from "../components/Auth";
 
 const Wrapper = styled.div`
   @media screen and (max-width: 1040px) {
@@ -18,7 +19,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const Home = (props) => {
+const Home = () => {
   const { user, setUser } = useContext(UserContext);
   const { feed, setFeed } = useContext(FeedContext);
   const [loading, setLoading] = useState(true);
@@ -28,21 +29,26 @@ const Home = (props) => {
   const history = useHistory();
   // console.log('history in home', history)
 
+  const renderLogin = () => {
+    return <Auth/>
+  }
   useEffect(() => {
     const checkAuthStatus = async () => {    
   
       try {
         const res = await axios.get('http://localhost:8001/me',  {
           withCredentials:true,
-          cancelToken: signal.current.token })
+          cancelToken: signal.current.token 
+        })
 
           console.log('checking', res)
 
           if(!res.data.status){
             localStorage.removeItem("user");
+            toast.error('Your session expired, refresh to reedirect to login page')
             console.log('user',user)
-            history.push('/')
-            toast.error('Your session is expired')
+            setLoading(false)
+            history.replace('/')
           }
 
           if(res.data.status){
@@ -52,6 +58,7 @@ const Home = (props) => {
         if (axios.isCancel(error)) {
           console.log('Request canceled', error.message);
         } else {
+          setLoading(false)
           throw error
         }
       }

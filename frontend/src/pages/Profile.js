@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import PostPreview from "../components/PostPreview";
 import ProfileHeader from "../components/ProfileHeader";
 import Placeholder from "../components/Placeholder";
 import Loader from "../components/Loader";
 import { PostIcon, SavedIcon } from "../components/Icons";
 import axios from 'axios'
+import Button from "../styles/Button";
+import PlaceholderContainer from "../styles/PlaceholderContainer";
 
 const Wrapper = styled.div`
   .profile-tab {
@@ -85,10 +87,13 @@ const Profile = () => {
 
   if (deadend) {
     return (
-      <Placeholder
-        title="Sorry, this page isn't available"
-        text="The link you followed may be broken, or the page may have been removed"
-      />
+      <PlaceholderContainer>
+        <Placeholder
+          title="Sorry, this page isn't available"
+          text="The link you followed may be broken, or the page may have been removed"
+        />
+        <Link to="/"><Button>Home</Button></Link>
+      </PlaceholderContainer>
     );
   }
 

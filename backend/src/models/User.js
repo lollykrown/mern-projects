@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default:
-      "https://res.cloudinary.com/douy56nkf/image/upload/v1594060920/defaults/txxeacnh3vanuhsemfc8.png",
+      "https://res.cloudinary.com/lollykrown/image/upload/v1603986040/uploaded/default_avatar.jpg",
   },
   bio: String,
   website: String,
