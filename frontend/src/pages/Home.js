@@ -25,7 +25,7 @@ const Home = (props) => {
 
   const signal = useRef(axios.CancelToken.source());
 
-  // const history = useHistory();
+  const history = useHistory();
   // console.log('history in home', history)
 
   useEffect(() => {
@@ -37,15 +37,16 @@ const Home = (props) => {
           cancelToken: signal.current.token })
 
           console.log('checking', res)
-          if(res.data.status){
-            setUser(res.data.data)
-          }
 
           if(!res.data.status){
             localStorage.removeItem("user");
             console.log('user',user)
             toast.error('Your session is expired')
-            // props.history.replace('/login')
+            history.replace('/')
+          }
+
+          if(res.data.status){
+            setUser(res.data.data)
           }
       } catch (error) {
         if (axios.isCancel(error)) {
@@ -72,8 +73,6 @@ const Home = (props) => {
         const res = await axios.get('http://localhost:8001/posts',  {
           withCredentials:true,
           cancelToken: signal.current.token })
-
-          console.log('posts posts', res)
           setFeed(res.data.data)
           setLoading(false);
       } catch (error) {
