@@ -6,7 +6,6 @@ import ProfileHeader from "../components/ProfileHeader";
 import Placeholder from "../components/Placeholder";
 import Loader from "../components/Loader";
 import { PostIcon, SavedIcon } from "../components/Icons";
-import { toast } from "react-toastify";
 import axios from 'axios'
 
 const Wrapper = styled.div`

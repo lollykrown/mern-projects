@@ -8,7 +8,6 @@ import DeletePost from "./DeletePost";
 import Modal from "./Modal";
 import useInput from "../hooks/useInput";
 import Avatar from "../styles/Avatar";
-import { client } from "../utils";
 import { timeSince } from "../utils";
 import { MoreIcon, CommentIcon, InboxIcon } from "./Icons";
 import { toast } from "react-toastify";

@@ -25,7 +25,7 @@ const Home = (props) => {
 
   const signal = useRef(axios.CancelToken.source());
 
-  const history = useHistory();
+  // const history = useHistory();
   // console.log('history in home', history)
 
   useEffect(() => {

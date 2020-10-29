@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import Follow from "./Follow";
 import Avatar from "../styles/Avatar";
 import { UserContext } from "../context/UserContext";
-import { client } from "../utils";
+import axios from 'axios'
 
 const Wrapper = styled.div`
   width: 280px;
@@ -96,11 +96,33 @@ const Suggestions = () => {
   const { user } = useContext(UserContext);
   const [users, setUsers] = useState([]);
 
+  const signal = useRef(axios.CancelToken.source());
+
   useEffect(() => {
-    client("/users").then((response) => {
-      setUsers(response.data.filter((user) => !user.isFollowing));
-    });
-  }, []);
+    const loadUsers = async () => {    
+  
+      try {
+        const res = await axios.get('http://localhost:8001/users',  {
+          withCredentials:true,
+          cancelToken: signal.current.token })
+
+          setUsers(res.data.data.filter((user) => !user.isFollowing));
+
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        } else {
+          throw error
+        }
+      }
+    };
+    
+    loadUsers()
+    return () => {
+      console.log('unmount and cancel running axios request');
+      signal.current.cancel('Operation canceled by the user.');
+    };
+  }, [])
 
   return (
     <Wrapper>

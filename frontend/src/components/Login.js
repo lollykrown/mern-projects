@@ -5,7 +5,6 @@ import useInput from "../hooks/useInput";
 import { UserContext } from "../context/UserContext";
 import logo from "../assets/logo.png";
 import axios from 'axios'
-import { useLocation, withRouter } from "react-router";
 
 export const FormWrapper = styled.div`
   background-color: ${(props) => props.theme.white};

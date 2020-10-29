@@ -1,8 +1,6 @@
-const mongoose = require("mongoose");
 const Post = require("../models/Post");
 const User = require("../models/User");
 const Comment = require("../models/Comment");
-const asyncHandler = require("../middlewares/asyncHandler");
 
 function postsController() {
 
@@ -22,7 +20,9 @@ function postsController() {
   function getPosts(req, res) {
     (async function post() {
       try {
-        const posts = await Post.find();
+        const posts = await Post.find({})
+        .sort({createdAt:-1})
+        .populate({ path: 'user', select: 'avatar username' }).exec();
 
         res.status(200).json({
           status: true,

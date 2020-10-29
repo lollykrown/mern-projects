@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -7,7 +7,7 @@ import Avatar from "../styles/Avatar";
 import useInput from "../hooks/useInput";
 import { UserContext } from "../context/UserContext";
 import { uploadImage } from "../utils";
-import { client } from "../utils";
+import axios from 'axios'
 
 export const Wrapper = styled.div`
   padding: 1rem;
@@ -96,6 +96,35 @@ const ProfileForm = () => {
   const bio = useInput(user.bio);
   const website = useInput(user.website);
 
+  
+
+  const signal = useRef(axios.CancelToken.source());
+
+  const handleRequest = async (b) => {
+    try {
+      const res = await axios.patch('http://localhost:8001/users', b, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true,
+        cancelToken: signal.current.token
+      })
+      console.log(res.data)
+
+      setUser(res.data.data);
+      localStorage.setItem("user", JSON.stringify(res.data));
+      history.push(`/${b.username || user.username}`);
+
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        console.log('Get request canceled');
+        toast.error(err.message)
+      } else {
+        console.log(err)
+        toast.error(err.message)
+      }
+    }
+  };
   const handleImageUpload = (e) => {
     if (e.target.files[0]) {
       uploadImage(e.target.files[0]).then((res) =>
@@ -122,14 +151,7 @@ const ProfileForm = () => {
       website: website.value,
       avatar: newAvatar || user.avatar,
     };
-
-    client("/users", { method: "PUT", body })
-      .then((res) => {
-        setUser(res.data);
-        localStorage.setItem("user", JSON.stringify(res.data));
-        history.push(`/${body.username || user.username}`);
-      })
-      .catch((err) => toast.error(err.message));
+    handleRequest(body)
   };
 
   return (

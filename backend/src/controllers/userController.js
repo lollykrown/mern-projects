@@ -16,6 +16,34 @@ function userController() {
     }
   }
 
+  function getUsers(req, res) {
+    (async function post() {
+      try {
+        let users = await User.find().select("-password").lean().exec();
+
+        console.log('passport', req.user)
+
+        users.forEach((user) => {
+          user.isFollowing = false;
+          const followers = user.followers.map((follower) => follower._id.toString());
+          if (followers.includes(req.user.id)) {
+            user.isFollowing = true;
+          }
+        });
+
+        users = users.filter((user) => user._id.toString() !== req.user.id);
+        console.log(users)
+        res.status(200).json({ status: true, data: users });
+      } catch (err) {
+        console.log(err.stack);
+        res.status(500).json({
+          status: false,
+          message: "Internal Server Error",
+        });
+      }
+    })();
+  }
+
   function getUser(req, res) {
     (async function post() {
       try {
@@ -68,32 +96,6 @@ function userController() {
       } catch (err) {
         console.log(err.stack);
         res.status(500).json({
-          message: "Internal Server Error",
-        });
-      }
-    })();
-  }
-
-  function getUsers(req, res) {
-    (async function post() {
-      try {
-        let users = await User.find().select("-password").lean().exec();
-console.log('passport', req.session.passport.user)
-        users.forEach((user) => {
-          user.isFollowing = false;
-          const followers = user.followers.map((follower) => follower._id.toString());
-          if (followers.includes(req.user.id)) {
-            user.isFollowing = true;
-          }
-        });
-
-        users = users.filter((user) => user._id.toString() !== req.user.id);
-        console.log(users)
-        res.status(200).json({ status: true, data: users });
-      } catch (err) {
-        console.log(err.stack);
-        res.status(500).json({
-          status: false,
           message: "Internal Server Error",
         });
       }

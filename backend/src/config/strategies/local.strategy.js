@@ -13,9 +13,6 @@ module.exports = function localStrategy() {
       (async function auth() {
         try {
           console.log(username, password)
-          // const query = { $or: [{ email: { $regex: username, $options: 'i' } }, { phone: { $regex: username, $options: 'i' } }] }
-
-          // User.find( { $or:[ {email:username}, {phone:username} ]},function (err, user) {
           User.findOne({ username }, function (err, result) {
             if (err) return done(err);
             if (!result) {

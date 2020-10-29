@@ -1,14 +1,11 @@
-import React, { useContext, useRef } from "react";
+import React, { useRef } from "react";
 import { toast } from "react-toastify";
-import { client } from "../utils";
 import { FormWrapper } from "./Login";
 import useInput from "../hooks/useInput";
-import { UserContext } from "../context/UserContext";
 import axios from 'axios'
 import logo from "../assets/logo.png";
 
 const Signup = (props) => {
-  const { setUser } = useContext(UserContext);
   const email = useInput("");
   const fullname = useInput("");
   const username = useInput("");
@@ -55,7 +52,7 @@ const Signup = (props) => {
 
       if (!res.status) {
         //console.log(res.message)
-        toast.error(res.data.message)
+        toast.error(res.message || res.data.message)
         return;
       }
 

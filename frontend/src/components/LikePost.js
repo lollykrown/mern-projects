@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { client } from "../utils";
 import { HeartIcon, FilledHeartIcon } from "./Icons";
 import axios from 'axios'
 import { toast } from "react-toastify";

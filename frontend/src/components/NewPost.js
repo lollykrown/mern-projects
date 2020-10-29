@@ -66,6 +66,7 @@ const NewPost = () => {
       reader.readAsDataURL(e.target.files[0]);
 
       uploadImage(e.target.files[0]).then((res) => {
+        console.log('cloudinary',res)
         setPostImage(res.secure_url);
       });
     }
