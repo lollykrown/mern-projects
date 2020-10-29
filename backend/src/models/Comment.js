@@ -1,25 +1,15 @@
-const mongoose = require("mongoose");
+const { Sequelize } = require("sequelize");
 
-const CommentSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  post: {
-    type: mongoose.Schema.ObjectId,
-    ref: "Post",
-    required: true,
-  },
-  text: {
-    type: String,
-    required: [true, "Please enter the comment"],
-    trim: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
-module.exports = mongoose.model("Comment", CommentSchema);
+module.exports = (sequelize, DataTypes) =>
+  sequelize.define("Comment", {
+    id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      primaryKey: true,
+      defaultValue: Sequelize.UUIDV4,
+    },
+    text: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  });

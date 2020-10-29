@@ -13,12 +13,11 @@ const GlobalStyle = createGlobalStyle`
 	}
 
 	body {
-		font-family: 'Fira Sans', sans-serif;
 		font-size: 1rem;
-		line-height: 1.7;
-		background: ${(props) => props.theme.bg};
+		font-family: ${(props) => props.theme.font}, sans-serif;
 		color: ${(props) => props.theme.primaryColor};
-		overflow-x: hidden;
+		background-color: ${(props) => props.theme.bg};
+		line-height: 1.8;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
@@ -27,11 +26,29 @@ const GlobalStyle = createGlobalStyle`
 
 	a {
 		text-decoration: none;
-		cursor: pointer;
 		color: inherit;
 	}
 
-	.pointer {
+	input, textarea {
+		font-family: ${(props) => props.theme.font}, sans-serif;
+		font-size: 1rem;
+	}
+
+	input:focus, textarea:focus, button:focus, video:focus {
+			outline: none;
+	}
+
+	button {
+		font-family: 'Fira Sans', sans-serif;
+		font-size: 1rem;
+		cursor: pointer;
+	}
+
+	textarea {
+		resize: none;
+	}
+
+	svg, .pointer {
 		cursor: pointer;
 	}
 
@@ -39,20 +56,67 @@ const GlobalStyle = createGlobalStyle`
 		color: ${(props) => props.theme.secondaryColor};
 	}
 
-	.danger {
-		color: ${(props) => props.theme.red};
+	.avatar {
+		height: 22px;
+		width: 22px;
+		border-radius: 10px;
+		object-fit: cover;
 	}
 
-	button, svg {
-	  cursor: pointer;
+
+	.md {
+		height: 50px;
+		width: 50px;
+		border-radius: 25px;
 	}
 
-	.bold {
-		font-weight: 500;
+	.small {
+		font-size: 0.9rem;
 	}
 
-	*:focus {
-	  outline: none;
+	.lg {
+		height: 60px;
+		width: 60px;
+		border-radius: 30px;
+	}
+
+	.flex-row {
+		display: flex;
+		align-items: center;
+	}
+
+	.flex-row img, .flex-row svg {
+		margin-right: 0.8rem;
+	}
+
+	.ruler {
+		height: 1px;
+		background: ${(props) => props.theme.darkGrey};
+		margin: 1rem 0;
+	}
+
+	.Toastify__toast {
+		font-family: ${(props) => props.theme.font}, sans-serif;
+		border-radius: 4px;
+	}
+
+	.Toastify__toast--error {
+		background: ${(props) => props.theme.darkGrey};
+	}
+
+	.Toastify__toast--dark, .Toastify__toast--default {
+		background: ${(props) => props.theme.purple};
+    color: #fff;
+	}
+
+	@media screen and (max-width: 530px) {
+		body {
+			font-size: 0.95rem;
+		}
+
+		button {
+			font-size: 0.9rem;
+	  }
 	}
 `;
 

@@ -1,10 +1,14 @@
-export const lightTheme = {
-  primaryColor: "#262626",
-  secondaryColor: "#B2B2B2",
-  bg: "#FAFAFA",
-  blue: "#0095F6",
-  red: "#ED4956",
+export const darkTheme = {
+  bg: "#181818",
+  primaryColor: "#FFF",
+  secondaryColor: "#AAAAAA",
+  grey: "#202020",
+  darkGrey: "#383838",
+  black: "#121212",
+  red: "#CC0000",
+  blue: "#3EA6FF",
   white: "#FFF",
-  borderColor: "#DBDBDB",
-  borderRadius: "4px",
+  pink: "#F86782",
+  purple: "#282A36",
+  font: "Fira Sans",
 };

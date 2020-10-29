@@ -1,116 +1,74 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 import styled from "styled-components";
-import Suggestions from "../components/Suggestions";
-import NoFeedSuggestions from "../components/NoFeedSuggestions";
-import Post from "../components/Post";
-import Loader from "../components/Loader";
-import { FeedContext } from "../context/FeedContext";
-import { UserContext } from "../context/UserContext";
-import { toast } from "react-toastify";
-import axios from 'axios'
-import { useHistory } from "react-router-dom";
+import VideoCard from "../components/VideoCard";
+import VideoGrid from "../styles/VideoGrid";
+import { getRecommendations } from "../actions";
+import Skeleton from "../skeletons/HomeSkeleton";
 
-const Wrapper = styled.div`
-  @media screen and (max-width: 1040px) {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+export const StyledHome = styled.div`
+  padding: 1.3rem;
+  width: 90%;
+  margin: 0 auto;
+  padding-bottom: 7rem;
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  @media screen and (max-width: 1093px) {
+    width: 95%;
+  }
+
+  @media screen and (max-width: 1090px) {
+    width: 99%;
+  }
+
+  @media screen and (max-width: 870px) {
+    width: 90%;
+  }
+
+  @media screen and (max-width: 670px) {
+    width: 99%;
+  }
+
+  @media screen and (max-width: 600px) {
+    width: 90%;
+  }
+
+  @media screen and (max-width: 530px) {
+    width: 100%;
   }
 `;
 
-const Home = () => {
-  const { user, setUser } = useContext(UserContext);
-  const { feed, setFeed } = useContext(FeedContext);
-  const [loading, setLoading] = useState(true);
-
-  const signal = useRef(axios.CancelToken.source());
-
-  const history = useHistory();
-  
+const Home = ({ isFetching, videos, getRecommendations }) => {
   useEffect(() => {
-    const checkAuthStatus = async () => {    
-  
-      try {
-        const res = await axios.get('http://localhost:8001/me',  {
-          withCredentials:true,
-          cancelToken: signal.current.token 
-        })
-          // console.log('checking', res)
+    getRecommendations();
+  }, [videos.length, getRecommendations]);
 
-          if(!res.data.status){
-            localStorage.removeItem("user");
-            toast.error('Your session expired, refresh to reedirect to login page')
-            console.log('user',user)
-            setLoading(false)
-            history.replace('/')
-          }
-
-          if(res.data.status){
-            setUser(res.data.data)
-          }
-      } catch (error) {
-        if (axios.isCancel(error)) {
-          console.log('Request canceled', error.message);
-        } else {
-          setLoading(false)
-          throw error
-        }
-      }
-    };
-    
-    checkAuthStatus()
-    return () => {
-      console.log('unmount and cancel running axios request');
-      signal.current.cancel('Operation canceled by the user.');
-    };
-  }, [setUser])
-
-  useEffect(() => {
-
-    const getPosts = async () => {    
-  
-      try {
-        const res = await axios.get('http://localhost:8001/posts',  {
-          withCredentials:true,
-          cancelToken: signal.current.token })
-          setFeed(res.data.data)
-          setLoading(false);
-      } catch (error) {
-        if (axios.isCancel(error)) {
-          console.log('Request canceled', error.message);
-        } else {
-          throw error
-        }
-      }
-    };
-    
-    getPosts()
-    return () => {
-      console.log('unmount and cancel running axios request');
-      signal.current.cancel('Operation canceled by the user.');
-    };
-  }, [setFeed])
-
-  if (loading) {
-    return <Loader />;
+  if (isFetching) {
+    return <Skeleton title={true} />;
   }
 
   return (
-    <Wrapper>
-      {feed.length > 0 ? (
-        <>
-          <div className="home">
-            {feed.map((post) => (
-              <Post key={post._id} post={post} />
-            ))}
-          </div>
-          <Suggestions />{" "}
-        </>
-      ) : (
-        <NoFeedSuggestions />
-      )}
-    </Wrapper>
+    <StyledHome>
+      <h2>Recommended</h2>
+      <VideoGrid>
+        {!isFetching &&
+          videos.map((video) => (
+            <Link key={video.id} to={`/watch/${video.id}`}>
+              <VideoCard video={video} />
+            </Link>
+          ))}
+      </VideoGrid>
+    </StyledHome>
   );
 };
 
-export default Home;
+const mapStateToProps = ({ recommendation }) => ({
+  isFetching: recommendation.isFetching,
+  videos: recommendation.videos,
+});
+
+export default connect(mapStateToProps, { getRecommendations })(Home);

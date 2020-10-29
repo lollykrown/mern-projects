@@ -1,4 +1,6 @@
-import axios from 'axios'
+import axios from "axios";
+import api from "../services/api";
+import { toast } from "react-toastify";
 
 export const timeSince = (timestamp) => {
   const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
@@ -32,45 +34,82 @@ export const timeSince = (timestamp) => {
   return Math.floor(seconds) + " seconds";
 };
 
-export const client = (endpoint, { body, ...customConfig } = {}) => {
-  const token = localStorage.getItem("token");
-  const headers = { "Content-Type": "application/json" };
+export const upload = async (resourceType, file) => {
+  const formData = new FormData();
+  formData.append("upload_preset", "youtubeclone");
+  formData.append("file", file);
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
+  let toastId = null;
   const config = {
-    method: body ? "POST" : "GET",
-    ...customConfig,
-    headers: {
-      ...headers,
-      ...customConfig.headers,
+    onUploadProgress: (p) => {
+      const progress = p.loaded / p.total;
+      if (toastId === null) {
+        toastId = toast("Upload in Progress", {
+          progress,
+        });
+      } else {
+        toast.update(toastId, {
+          progress,
+        });
+      }
     },
   };
 
-  if (body) {
-    config.body = JSON.stringify(body);
-  }
-
-  return fetch(`${process.env.REACT_APP_BACKEND_URL}${endpoint}`, config).then(
-    async (res) => {
-      const data = await res.json();
-
-      if (res.ok) {
-        return data;
-      } else {
-        return Promise.reject(data);
-      }
-    }
+  const { data } = await axios.post(
+    `${process.env.REACT_APP_CLOUDINARY_ENDPOINT}/${resourceType}/upload`,
+    formData,
+    config
   );
+
+  toast.dismiss(toastId);
+
+  return data.secure_url;
 };
 
-export const uploadImage = (file) => {
-  const data = new FormData();
-  data.append("file", file);
-  data.append("upload_preset", "instaclone");
+export const authenticate = async (endpoint, data) => {
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-  return axios.post(process.env.REACT_APP_CLOUDINARY_URL, data)
-  //).then((res) => res.json());
+  try {
+    const tokenRes = await axios.post(`${backendUrl}auth/${endpoint}`, data);
+
+    const config = {
+      headers: { Authorization: `Bearer ${tokenRes.data.data}` },
+    };
+
+    const userRes = await axios.get(`${backendUrl}auth/me`, config);
+
+    const user = { ...userRes.data.data, token: tokenRes.data.data };
+
+    api.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${tokenRes.data.data}`;
+
+    localStorage.setItem("user", JSON.stringify(user));
+
+    return user;
+  } catch (err) {
+		console.log(err.response);
+  }
+};
+
+export const removeChannelLocalSt = (channelId) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const updated = {
+    ...user,
+    channels: user.channels.filter((channel) => channel.id !== channelId),
+  };
+
+  localStorage.setItem("user", JSON.stringify(updated));
+};
+
+export const addChannelLocalSt = (channel) => {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const updated = {
+    ...user,
+    channels: [channel, ...user.channels],
+  };
+
+  localStorage.setItem("user", JSON.stringify(updated));
 };

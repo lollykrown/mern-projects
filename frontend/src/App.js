@@ -1,24 +1,29 @@
-import React, { useContext } from "react";
+import React from "react";
+import { connect } from "react-redux";
+import { ThemeProvider } from "styled-components";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import GlobalStyle from "./styles/GlobalStyle";
+import { darkTheme } from "./styles/theme";
+import Router from "./Router";
 import Auth from "./components/Auth";
-import Routing from "./Routing";
-import { UserContext } from "./context/UserContext";
-import { ThemeContext } from "./context/ThemeContext";
+import "react-toastify/dist/ReactToastify.css";
 
-const App = () => {
-  const { user } = useContext(UserContext);
-  const { theme } = useContext(ThemeContext);
+const App = ({ user }) => {
+  const loggedIn = user.token;
 
   return (
-    <StyledThemeProvider theme={theme}>
+    <ThemeProvider theme={darkTheme}>
       <GlobalStyle />
-      <ToastContainer autoClose={2000} closeButton={false} />
-      {user ? <Routing /> : <Auth />}
-    </StyledThemeProvider>
+      <ToastContainer
+        autoClose={2500}
+        position="top-right"
+        closeButton={false}
+      />
+      {loggedIn ? <Router /> : <Auth />}
+    </ThemeProvider>
   );
 };
 
-export default App;
+const mapStateToProps = (state) => ({ user: state.user });
+
+export default connect(mapStateToProps)(App);

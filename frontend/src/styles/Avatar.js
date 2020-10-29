@@ -1,19 +1,16 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 const Avatar = styled.img`
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
   object-fit: cover;
-  border-radius: 16px;
-  margin-right: 1rem;
 
-  ${(props) =>
-    props.lg &&
-    css`
-      width: 56px;
-      height: 56px;
-      border-radius: 28px;
-    `}
+  @media screen and (max-width: 500px) {
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+  }
 `;
 
 export default Avatar;
