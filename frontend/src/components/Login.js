@@ -111,13 +111,13 @@ const Login = (props) => {
       <form>
         <input
           type="text"
-          placeholder="johnwick@gmail.com"
+          placeholder="username"
           value={username.value}
           onChange={username.onChange}
         />
         <input
           type="password"
-          placeholder="mysuperpassword"
+          placeholder="password"
           value={password.value}
           onChange={password.onChange}
         />
