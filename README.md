@@ -2,16 +2,16 @@
 
 This branch is an Instagram clone using MERN stack
 
-This is the backend repo built with Express and MongoDB.
-Authentication is done with passport.js which automatically makes it easy to add authentication with google or any other option
+The backend repo was built with Express and MongoDB.
+Authentication was done with passport.js which automatically makes it easy to add authentication with google or any other auth options
 
-The backend repo is here, [click here](https://github.com/lollykrown/mern-projects/tree/instagram-clone/backend)
+The backend repo is at [backend](https://github.com/lollykrown/mern-projects/tree/instagram-clone/backend)
 
-The backend is hosted at <a href="hhttps://mern-backend.herokuapp.com">Nothing to see here</a>
+It is hosted at [Nothing to see here](https://mern-backend.herokuapp.com)
 
-The frontend repo is here, [click here](https://github.com/lollykrown/mern-projects/tree/instagram-clone/frontend)
+The frontend repo is at [click here](https://github.com/lollykrown/mern-projects/tree/instagram-clone/frontend)
 
-The frontend is hosted at <a href="https://insta.netlify.app">https://insta.netlify.app</a>
+And the frontend is hosted at <a href="https://insta.netlify.app">https://insta.netlify.app</a>
 
 ## UI
 
