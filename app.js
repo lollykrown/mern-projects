@@ -5,6 +5,7 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const cors = require("cors");
+const path = require('path')
 const MongoStore = require('connect-mongo')(session);
 
 const errorHandler = require("./src/middlewares/errorHandler");
@@ -14,12 +15,12 @@ const passport = require("passport");
 const app = express();
 const port = process.env.PORT || 8001
 
-mongoose.connect(process.env.DB_URL, { 
-    useNewUrlParser: true, 
-    useUnifiedTopology: true, 
-    useFindAndModify: false, 
-    useCreateIndex: true 
-  });
+mongoose.connect(process.env.DB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true
+});
 const db = mongoose.connection;
 
 const sessionOptions = {
@@ -45,14 +46,14 @@ db.once('open', function () {
 // Set up CORS
 const corsOptions = {
   origin: 'http://localhost:3000',
-  methods: ['POST', 'PUT', 'GET', 'PATCH','OPTIONS', 'DELETE','HEAD'],
+  methods: ['POST', 'PUT', 'GET', 'PATCH', 'OPTIONS', 'DELETE', 'HEAD'],
   credentials: true,
   allowedHeaders: "Content-Type, Authorization, X-Requested-With",
 
   // "preflightContinue": false,
   // "optionsSuccessStatus": 204,
-//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
- }
+  //   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 app.use(express.json());
 app.use(cors(corsOptions));
@@ -61,10 +62,6 @@ app.use(cookieParser());
 app.use(session(sessionOptions));
 
 require('./src/config/passport.js')(app);
-
-app.get('/', (req,res) => {
-  res.send('it works')
-})
 
 const authRouter = require("./src/routes/authRoutes")();
 const postRouter = require("./src/routes/postRoutes")();
@@ -75,6 +72,15 @@ app.use("/posts", postRouter);
 app.use("/users", userRouter);
 
 app.use(errorHandler);
+
+
+// Serve static assets if in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('clent/build'))
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+  })
+}
 
 app.listen(
   port,
