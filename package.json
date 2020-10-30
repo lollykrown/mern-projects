@@ -1,8 +1,8 @@
 {
-  "name": "tinder-clone",
+  "name": "insta-clone",
   "version": "1.0.0",
   "description": "",
-  "main": "test.js",
+  "main": "app.js",
   "scripts": {
     "client-install": "npm install --prefix client",
     "start": "node app.js",
