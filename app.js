@@ -34,7 +34,7 @@ const sessionOptions = {
   resave: false,
   secret: process.env.SECRET,
   cookie: {
-    //secure: true,
+    secure: true,
     path: '/',
     httpOnly: true,
     maxAge: 2592000000 // 30 x 24 x 60 x 60 x 1000sec   //30 days
