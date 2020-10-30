@@ -63,6 +63,14 @@ app.use(session(sessionOptions));
 
 require('./src/config/passport.js')(app);
 
+// Serve static assets if in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('clent/build'))
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+  })
+}
+
 const authRouter = require("./src/routes/authRoutes")();
 const postRouter = require("./src/routes/postRoutes")();
 const userRouter = require("./src/routes/userRoutes")();
@@ -73,14 +81,6 @@ app.use("/users", userRouter);
 
 app.use(errorHandler);
 
-
-// Serve static assets if in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('clent/build'))
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
-  })
-}
 
 app.listen(
   port,
