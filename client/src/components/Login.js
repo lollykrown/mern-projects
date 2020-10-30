@@ -34,13 +34,26 @@ export const FormWrapper = styled.div`
     width: 85%;
   }
 
-  input[type="submit"] {
+  input[type="submit"], .github {
     background-color: ${(props) => props.theme.blue};
     color: ${(props) => props.theme.white};
     border: 1px solid ${(props) => props.theme.blue};
     cursor: pointer;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1.2rem;
+    font-family: "Fira Sans", sans-serif;
+    font-size: 1rem;
+    border-radius: 4px;
+    width: 80%;
   }
 
+  .github {
+    background-color: ${(props) => props.theme.primaryColor};
+    color: ${(props) => props.theme.white};
+    border: 1px solid ${(props) => props.theme.blue};
+    cursor: pointer;
+  }
   p {
     margin-top: 2rem;
   }
@@ -152,7 +165,7 @@ const Login = (props) => {
         />
         <input type="submit" value="Log In" className="login-btn" />
       </form>
-      <button value="" onClick={() => googleLogin()} className="login-btn">Log In with Google</button>
+      <button value="" onClick={() => googleLogin()} className="login-btn github">Log In with Github</button>
 
       <div>
         <p>
