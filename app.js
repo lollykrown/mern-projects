@@ -51,7 +51,7 @@ db.once('open', function () {
 
 // Set up CORS
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'https://kay-insta.netlify.app/',
   methods: ['POST', 'PUT', 'GET', 'PATCH','OPTIONS', 'DELETE','HEAD'],
   credentials: true,
   allowedHeaders: "Content-Type, Authorization, X-Requested-With",
