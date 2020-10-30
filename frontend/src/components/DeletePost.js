@@ -1,22 +1,19 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext } from "react";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
 import { FeedContext } from "../context/FeedContext";
-import axios from 'axios'
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 
 const DeletePost = ({ postId, closeModal, goToHome }) => {
   const { feed, setFeed } = useContext(FeedContext);
   const history = useHistory();
 
-  const signal = useRef(axios.CancelToken.source());
-
   const handleRequest = async (id) => {
     try {
-      const res = await axios.delete(`http://localhost:8001/posts/${id}`, {
-        withCredentials: true,
-        cancelToken: signal.current.token
+      await axios.delete(`/posts/${id}`, {
+        cancelToken: source.token
       })
-      console.log(res)
 
     } catch (err) {
       if (axios.isCancel(err)) {
@@ -26,7 +23,10 @@ const DeletePost = ({ postId, closeModal, goToHome }) => {
         console.log(err)
         toast.error(err.message)
       }
-    }
+    } 
+      return () => {
+        source.cancel('Operation canceled by the user.');
+      };
   }; 
 
   const handleDeletePost = () => {

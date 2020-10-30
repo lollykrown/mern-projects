@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BookmarkIcon, FilledBookmarkIcon } from "./Icons";
-import axios from 'axios'
 import { toast } from "react-toastify";
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 
 const SavePost = ({ isSaved, postId }) => {
   const [savedState, setSaved] = useState(isSaved);
@@ -10,14 +11,10 @@ const SavePost = ({ isSaved, postId }) => {
     setSaved(isSaved);
   }, [isSaved]);
 
-
-  const signal = useRef(axios.CancelToken.source());
-
   const handleRequest = async (id) => {
     try {
-      const res = await axios.get(`http://localhost:8001/posts/${id}/toggleSave`, {
-        withCredentials: true,
-        cancelToken: signal.current.token
+      const res = await axios.get(`/posts/${id}/toggleSave`, {
+        cancelToken: source.token
       })
       console.log(res)
 
@@ -30,6 +27,9 @@ const SavePost = ({ isSaved, postId }) => {
         toast.error(err.message)
       }
     }
+    return () => {
+      source.cancel('Operation canceled by the user.');
+    };
   }; 
 
   const handleToggleSave = () => {

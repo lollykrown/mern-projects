@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import LikePost from "./LikePost";
@@ -11,8 +11,9 @@ import Avatar from "../styles/Avatar";
 import { timeSince } from "../utils";
 import { MoreIcon, CommentIcon, InboxIcon } from "./Icons";
 import { toast } from "react-toastify";
-import axios from 'axios'
 import ModalContentWrapper from '../styles/ModalContentWrapper'
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 
 export const ModalContent = ({ hideGotoPost, postId, closeModal }) => {
   const history = useHistory();
@@ -118,14 +119,10 @@ const Post = ({ post }) => {
   const incLikes = () => setLikes(likesState + 1);
   const decLikes = () => setLikes(likesState - 1);
 
-
-  const signal = useRef(axios.CancelToken.source());
-
   const handleRequest = async (newc, id) => {
     try {
-      const res = await axios.post(`http://localhost:8001/posts/${id}/comments`, { text: comment.value }, {
-        withCredentials: true,
-        cancelToken: signal.current.token
+      const res = await axios.post(`/posts/${id}/comments`, { text: comment.value }, {
+        cancelToken: source.token
       })
       console.log('comments', res.data)
       setNewComments([...newc, res.data.data]);
@@ -139,6 +136,10 @@ const Post = ({ post }) => {
         toast.error(err.message)
       }
     }
+    return () => {
+      source.cancel('Operation canceled by the user.');
+      console.log('unmount and cancel running axios request');
+    };
   };
 
   const handleAddComment = (e) => {

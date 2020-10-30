@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import axios from 'axios'
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 import { useHistory } from "react-router-dom";
 import Avatar from "../styles/Avatar";
 
@@ -52,17 +53,12 @@ const Search = () => {
   const [users, setUsers] = useState([]);
   const [filtered, setFilteredUsers] = useState([])
 
-  const signal = useRef(axios.CancelToken.source());
-
   useEffect(() => {
-    const s = signal;
-
     const loadUsers = async () => {
 
       try {
-        const res = await axios.get('http://localhost:8001/users', {
-          withCredentials: true,
-          cancelToken: s.current.token
+        const res = await axios.get('/users', {
+          cancelToken: source.token
         })
 
         setUsers(res.data.data);
@@ -78,8 +74,7 @@ const Search = () => {
 
     loadUsers()
     return () => {
-      console.log('unmount and cancel running axios request');
-      s.current.cancel('Operation canceled by the user.');
+      source.cancel('Operation canceled by the user.');
     };
   }, [])
 

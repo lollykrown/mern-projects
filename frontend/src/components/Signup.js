@@ -1,17 +1,16 @@
-import React, { useRef } from "react";
+import React from "react";
 import { toast } from "react-toastify";
 import { FormWrapper } from "./Login";
 import useInput from "../hooks/useInput";
-import axios from 'axios'
 import logo from "../assets/logo.png";
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 
 const Signup = (props) => {
   const email = useInput("");
   const fullname = useInput("");
   const username = useInput("");
   const password = useInput("");
-
-  const signal = useRef(axios.CancelToken.source());
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -42,12 +41,8 @@ const Signup = (props) => {
 
     console.log(body)
     try {
-      const res = await axios.post('http://localhost:8001/signup', body, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true,
-        cancelToken: signal.current.token
+      const res = await axios.post('/signup', body, {
+        cancelToken: source.token
       })
 
       if (!res.status) {
@@ -55,12 +50,7 @@ const Signup = (props) => {
         toast.error(res.message || res.data.message)
         return;
       }
-
-      console.log(res.data)
       res.data.status && toast.info('You have been registered, click on login to sign in')
-      // res.data.status && props.history.replace('/login')
-      // return props.login
-
     } catch (err) {
       if (axios.isCancel(e)) {
         console.log('Get request canceled');
@@ -75,6 +65,9 @@ const Signup = (props) => {
     username.setValue("");
     password.setValue("");
     email.setValue("");
+    return () => {
+      source.cancel('Operation canceled by the user.');
+    };
   };
 
   return (

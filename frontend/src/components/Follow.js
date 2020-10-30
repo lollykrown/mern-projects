@@ -1,20 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../styles/Button";
-import axios from 'axios'
 import { toast } from "react-toastify";
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 
 const Follow = ({ nobtn, isFollowing, incFollowers, decFollowers, userId }) => {
   const [followingState, setFollowingState] = useState(isFollowing);
 
   useEffect(() => setFollowingState(isFollowing), [isFollowing]);
 
-  const signal = useRef(axios.CancelToken.source());
-
   const handleRequest = async (action) => {
     try {
-      const res = await axios.get(`http://localhost:8001/users/${userId}/${action}`, {
-        withCredentials: true,
-        cancelToken: signal.current.token
+      const res = await axios.get(`/users/${userId}/${action}`, {
+        cancelToken: source.token
       })
       console.log(res)
     } catch (err) {
@@ -26,6 +24,9 @@ const Follow = ({ nobtn, isFollowing, incFollowers, decFollowers, userId }) => {
         toast.error(err.message)
       }
     }
+    return () => {
+      source.cancel('Operation canceled by the user.');
+    };
   };
 
   const handleFollow = () => {

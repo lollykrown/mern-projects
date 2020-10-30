@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import Avatar from "../styles/Avatar";
 import Follow from "./Follow";
 import Loader from "./Loader";
 import { toast } from "react-toastify";
-import axios from 'axios'
 import Wrapper from "../styles/Wrapper";
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 
 const NoFeedSuggestions = () => {
   const [users, setUsers] = useState([]);
@@ -13,15 +14,11 @@ const NoFeedSuggestions = () => {
 
   const history = useHistory();
 
-  const signal = useRef(axios.CancelToken.source());
-
   useEffect(() => {
-    const s = signal;
     const getUsers = async () => {
       try {
-        const res = await axios.get('http://localhost:8001/users', {
-          withCredentials: true,
-          cancelToken: s.current.token
+        const res = await axios.get('/users', {
+          cancelToken: source.token
         })
 
         console.log('suggestions', res)
@@ -41,7 +38,7 @@ const NoFeedSuggestions = () => {
     getUsers()
     return () => {
       console.log('unmount and cancel running axios request');
-      s.current.cancel('Operation canceled by the user.');
+      source.cancel('Operation canceled by the user.');
     };
   }, [])
 

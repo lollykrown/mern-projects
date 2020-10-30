@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HeartIcon, FilledHeartIcon } from "./Icons";
-import axios from 'axios'
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 import { toast } from "react-toastify";
 
 const LikePost = ({ isLiked, postId, incLikes, decLikes }) => {
@@ -10,13 +11,10 @@ const LikePost = ({ isLiked, postId, incLikes, decLikes }) => {
     setLiked(isLiked);
   }, [isLiked]);
 
-  const signal = useRef(axios.CancelToken.source());
-
   const handleRequest = async (action) => {
     try {
-      const res = await axios.get(`http://localhost:8001/posts/${postId}/${action}`, {
-        withCredentials: true,
-        cancelToken: signal.current.token
+      const res = await axios.get(`/posts/${postId}/${action}`, {
+        cancelToken: source.token
       })
       console.log(res)
     } catch (err) {
@@ -28,6 +26,9 @@ const LikePost = ({ isLiked, postId, incLikes, decLikes }) => {
         toast.error(err.message)
       }
     }
+    return () => {
+      source.cancel('Operation canceled by the user.');
+    };
   };
 
   const handleToggleLike = () => {

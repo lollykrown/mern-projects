@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import Modal from "./Modal";
@@ -6,7 +6,8 @@ import useInput from "../hooks/useInput";
 import { FeedContext } from "../context/FeedContext";
 import { uploadImage } from "../utils";
 import { NewPostIcon } from "./Icons";
-import axios from 'axios'
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 
 const NewPostWrapper = styled.div`
   .newpost-header {
@@ -72,9 +73,6 @@ const NewPost = () => {
     }
   };
 
-  const signal = useRef(axios.CancelToken.source());
-
-
   const handleSubmitPost = async () => {
     if (!caption.value) {
       return toast.error("Please write a caption");
@@ -100,12 +98,8 @@ const NewPost = () => {
     };
 
     try {
-      const res = await axios.post('http://localhost:8001/posts', body, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true,
-        cancelToken: signal.current.token
+      const res = await axios.post('/posts', body, {
+        cancelToken: source.token
       })
       console.log(res)
       const post = res.data.data;
@@ -125,6 +119,9 @@ const NewPost = () => {
         toast.error(err.message)
       }
     }
+    return () => {
+      source.cancel('Operation canceled by the user.');
+    };
   };
 
   return (

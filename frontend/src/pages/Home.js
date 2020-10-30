@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import styled from "styled-components";
 import Suggestions from "../components/Suggestions";
 import NoFeedSuggestions from "../components/NoFeedSuggestions";
@@ -7,8 +7,9 @@ import Loader from "../components/Loader";
 import { FeedContext } from "../context/FeedContext";
 import { UserContext } from "../context/UserContext";
 import { toast } from "react-toastify";
-import axios from 'axios'
 import { useHistory } from "react-router-dom";
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 
 const Wrapper = styled.div`
   @media screen and (max-width: 1040px) {
@@ -23,18 +24,13 @@ const Home = () => {
   const { feed, setFeed } = useContext(FeedContext);
   const [loading, setLoading] = useState(true);
 
-  const signal = useRef(axios.CancelToken.source());
-
   const history = useHistory();
   
   useEffect(() => {
-    const s = signal
     const checkAuthStatus = async () => {    
-  
       try {
-        const res = await axios.get('http://localhost:8001/me',  {
-          withCredentials:true,
-          cancelToken: s.current.token 
+        const res = await axios.get('/me',  {
+          cancelToken: source.token 
         })
           // console.log('checking', res)
 
@@ -61,7 +57,7 @@ const Home = () => {
     
     checkAuthStatus()
     return () => {
-      s.current.cancel('Operation canceled by the user.');
+      source.cancel('Operation canceled by the user.');
       console.log('unmount and cancel running axios request');
     };
   }, [setUser])
@@ -69,14 +65,11 @@ const Home = () => {
   // }, [setUser, history, user])
 
   useEffect(() => {
-
-    const s = signal;
     const getPosts = async () => {    
-  
       try {
-        const res = await axios.get('http://localhost:8001/posts',  {
-          withCredentials:true,
-          cancelToken: s.current.token })
+        const res = await axios.get('/posts',  {
+          cancelToken: source.token 
+        })
           setFeed(res.data.data)
           setLoading(false);
       } catch (error) {
@@ -90,7 +83,7 @@ const Home = () => {
     
     getPosts()
     return () => {
-      s.current.cancel('Operation canceled by the user.');
+      source.cancel('Operation canceled by the user.');
     };
   }, [setFeed])
 

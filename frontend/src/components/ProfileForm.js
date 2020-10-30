@@ -7,7 +7,8 @@ import Avatar from "../styles/Avatar";
 import useInput from "../hooks/useInput";
 import { UserContext } from "../context/UserContext";
 import { uploadImage } from "../utils";
-import axios from 'axios'
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 
 export const Wrapper = styled.div`
   padding: 1rem;
@@ -96,18 +97,12 @@ const ProfileForm = () => {
   const bio = useInput(user.bio);
   const website = useInput(user.website);
 
-  
-
   const signal = useRef(axios.CancelToken.source());
 
   const handleRequest = async (b) => {
     try {
-      const res = await axios.put('http://localhost:8001/users', b, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true,
-        cancelToken: signal.current.token
+      const res = await axios.put('/users', b, {
+        cancelToken: source.token
       })
       console.log(res.data)
 
@@ -124,6 +119,9 @@ const ProfileForm = () => {
         toast.error(err.message)
       }
     }
+    return () => {
+      source.cancel('Operation canceled by the user.');
+    };
   };
   const handleImageUpload = (e) => {
     if (e.target.files[0]) {

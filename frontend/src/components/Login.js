@@ -1,10 +1,11 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import useInput from "../hooks/useInput";
 import { UserContext } from "../context/UserContext";
 import logo from "../assets/logo.png";
-import axios from 'axios'
+import axios from '../utils/axios'
+import { source } from '../utils/axios'
 import Loader from "./Loader";
 
 export const FormWrapper = styled.div`
@@ -57,8 +58,6 @@ const Login = (props) => {
   const password = useInput("");
   const [loading, setLoading] = useState(false);
 
-  const signal = useRef(axios.CancelToken.source());
-
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -70,12 +69,12 @@ const Login = (props) => {
     const body = { username: username.value, password: password.value };
 
     try {
-      const res = await axios.post('http://localhost:8001/login', body, {
+      const res = await axios.post('/login', body, {
         headers: {
           'Content-Type': 'application/json'
         },
         withCredentials: true,
-        cancelToken: signal.current.token
+        cancelToken: source.token
       })
 
       if (!res.status) {
@@ -99,6 +98,9 @@ const Login = (props) => {
 
     username.setValue("");
     password.setValue("");
+    return () => {
+      source.cancel('Operation canceled by the user.');
+    };
   };
 
   if (loading) {
