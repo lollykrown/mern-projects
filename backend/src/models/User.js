@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const UserSchema = new mongoose.Schema({
@@ -23,7 +22,7 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Please enter your password"],
+    // required: [true, "Please enter your password"],
     minlength: [6, "Password should be atleast minimum of 6 characters"],
     // maxlength: [12, "Password should be maximum of 12 characters"],
   },
@@ -54,6 +53,9 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  githubId: {
+    type:String
+  }
 });
 
 // UserSchema.pre("save", async function (next) {

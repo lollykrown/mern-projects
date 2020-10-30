@@ -10,8 +10,6 @@ import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import Axios from '../utils/axios'
-import PostPreview from '../components/PostPreview'
-
 
 const Wrapper = styled.div`
   @media screen and (max-width: 1040px) {
@@ -39,10 +37,10 @@ const Home = () => {
           // console.log('checking', res)
 
           if(!res.data.status){
+            setLoading(false)
             localStorage.removeItem("user");
             toast.error('Your session expired, refresh to reedirect to login page')
             console.log('user',user)
-            setLoading(false)
             history.replace('/')
           }
 
@@ -74,12 +72,14 @@ const Home = () => {
         const res = await Axios.get('/posts',  {
           cancelToken: source.token 
         })
+        console.log(res)
           setFeed(res.data.data)
           setLoading(false);
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log('Request canceled', error.message);
         } else {
+          setLoading(false)
           throw error
         }
       }

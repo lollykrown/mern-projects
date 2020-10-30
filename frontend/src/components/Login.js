@@ -61,22 +61,9 @@ const Login = (props) => {
   const password = useInput("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
-    setLoading(true)
-    if (!username.value || !password.value) {
-      return toast.error("Please fill in both the fields");
-    }
-
-    const body = { username: username.value, password: password.value };
-
+  const googleLogin = async() =>{
     try {
-      const res = await Axios.post('/login', body, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true,
+      const res = await Axios.get('/auth/github', {
         cancelToken: source.token
       })
 
@@ -85,7 +72,8 @@ const Login = (props) => {
         return;
       }
       localStorage.setItem("user", JSON.stringify(res.data.data));
-      setUser(res.data.data);
+      // setUser(res.data.data);
+      console.log('google',res)
       toast.success("Login successful");
       setLoading(false);
 
@@ -95,6 +83,42 @@ const Login = (props) => {
         toast.error(err.message)
       } else {
         console.log(err)
+        toast.error(err.message)
+      }
+    }
+
+  }
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    setLoading(true)
+    if (!username.value || !password.value) {
+      return toast.error("Please fill in both the fields");
+    }
+
+    const body = { username: username.value, password: password.value };
+    try {
+      const res = await Axios.post('/login', body, {
+        cancelToken: source.token
+      })
+
+      if (!res.status) {
+        console.log(res.data)
+        toast.error(res.data.message)
+        return;
+      }
+      localStorage.setItem("user", JSON.stringify(res.data.data));
+      setUser(res.data.data);
+      toast.success("Login successful");
+      setLoading(false);
+
+    } catch (err) {
+      setLoading(false)
+      if (axios.isCancel(err)) {
+        console.log('Get request canceled');
+        toast.error(err.message)
+      } else {
+        console.log(err.message)
         toast.error(err.message)
       }
     }
@@ -128,6 +152,7 @@ const Login = (props) => {
         />
         <input type="submit" value="Log In" className="login-btn" />
       </form>
+      <button value="" onClick={() => googleLogin()} className="login-btn">Log In with Google</button>
 
       <div>
         <p>

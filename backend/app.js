@@ -8,18 +8,11 @@ const cors = require("cors");
 const MongoStore = require('connect-mongo')(session);
 
 const errorHandler = require("./src/middlewares/errorHandler");
+const passport = require("passport");
 
 //App config
 const app = express();
 const port = process.env.PORT || 8001
-
-// const pusher = new Pusher({
-//     app_id: process.env.app_id,
-//     key: process.env.key,
-//     secret: process.env.secret,
-//     cluster: "mt1",
-//     useTLS: true
-//   });
 
 mongoose.connect(process.env.DB_URL, { 
     useNewUrlParser: true, 
@@ -69,6 +62,9 @@ app.use(session(sessionOptions));
 
 require('./src/config/passport.js')(app);
 
+app.get('/', (req,res) => {
+  res.send('it works')
+})
 
 const authRouter = require("./src/routes/authRoutes")();
 const postRouter = require("./src/routes/postRoutes")();

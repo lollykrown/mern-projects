@@ -4,9 +4,8 @@ const Post = require("../models/Post");
 function userController() {
 
   function isUserSignedIn(req, res, next) {
-    if (req.user) {
+    if (req.isAuthenticated) {
       console.log('auth',req.isAuthenticated())
-      console.log('You are logged in')
       console.log(req.cookies)
       next();
     } else {
@@ -19,7 +18,7 @@ function userController() {
   function getUsers(req, res) {
     (async function post() {
       try {
-        let users = await User.find().select("-password").lean().exec();
+        let users = await User.find().select("-password").sort('field -createdAt').lean().exec();
 
         // console.log('passport', req.user)
 
@@ -32,6 +31,7 @@ function userController() {
         });
 
         users = users.filter((user) => user._id.toString() !== req.user.id);
+
         res.status(200).json({ status: true, data: users });
       } catch (err) {
         console.log(err.stack);
