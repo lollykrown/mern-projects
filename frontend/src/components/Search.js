@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
 import { useHistory } from "react-router-dom";
 import Avatar from "../styles/Avatar";
+import axios from 'axios';
+import Axios from '../utils/axios'
 
 const InputWrapper = styled.input`
   padding: 0.4rem 0.6rem;
@@ -53,11 +53,14 @@ const Search = () => {
   const [users, setUsers] = useState([]);
   const [filtered, setFilteredUsers] = useState([])
 
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+
   useEffect(() => {
     const loadUsers = async () => {
 
       try {
-        const res = await axios.get('/users', {
+        const res = await Axios.get('/users', {
           cancelToken: source.token
         })
 
@@ -92,16 +95,12 @@ const Search = () => {
     setSearch(value)
   }
 
-  console.log(filtered)
-
   return (
     <>
       <InputWrapper
         type="search"
         value={search}
         onChange={e => setVal(e)}
-        // onKeyDown={handleSearch}
-        // onChange={search.onChange}
         placeholder="Search"
         aria-label="Search"
       />

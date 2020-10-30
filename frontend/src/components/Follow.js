@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Button from "../styles/Button";
 import { toast } from "react-toastify";
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
 
 const Follow = ({ nobtn, isFollowing, incFollowers, decFollowers, userId }) => {
   const [followingState, setFollowingState] = useState(isFollowing);
 
   useEffect(() => setFollowingState(isFollowing), [isFollowing]);
 
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+
   const handleRequest = async (action) => {
     try {
-      const res = await axios.get(`/users/${userId}/${action}`, {
+      const res = await Axios.get(`/users/${userId}/${action}`, {
         cancelToken: source.token
       })
       console.log(res)

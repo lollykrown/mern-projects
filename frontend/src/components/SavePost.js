@@ -1,11 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BookmarkIcon, FilledBookmarkIcon } from "./Icons";
 import { toast } from "react-toastify";
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
 
 const SavePost = ({ isSaved, postId }) => {
   const [savedState, setSaved] = useState(isSaved);
+
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
 
   useEffect(() => {
     setSaved(isSaved);
@@ -13,7 +16,7 @@ const SavePost = ({ isSaved, postId }) => {
 
   const handleRequest = async (id) => {
     try {
-      const res = await axios.get(`/posts/${id}/toggleSave`, {
+      const res = await Axios.get(`/posts/${id}/toggleSave`, {
         cancelToken: source.token
       })
       console.log(res)

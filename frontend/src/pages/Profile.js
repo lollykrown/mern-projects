@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link, useParams } from "react-router-dom";
 import PostPreview from "../components/PostPreview";
@@ -6,9 +6,10 @@ import ProfileHeader from "../components/ProfileHeader";
 import Placeholder from "../components/Placeholder";
 import Loader from "../components/Loader";
 import { PostIcon, SavedIcon } from "../components/Icons";
-import axios from 'axios'
 import Button from "../styles/Button";
 import PlaceholderContainer from "../styles/PlaceholderContainer";
+import axios from 'axios';
+import Axios from '../utils/axios'
 
 const Wrapper = styled.div`
   .profile-tab {
@@ -48,17 +49,14 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [deadend, setDeadend] = useState(false);
 
-  const signal = useRef(axios.CancelToken.source());
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
 
   useEffect(() => {
-
-    const s = signal
     const getUser = async () => {
-
       try {
-        const res = await axios.get(`http://localhost:8001/users/${username}`, {
-          withCredentials: true,
-          cancelToken: s.current.token
+        const res = await Axios.get(`/users/${username}`, {
+          cancelToken: source.token
         })
         if (res.data.status) {
           setLoading(false);
@@ -67,9 +65,9 @@ const Profile = () => {
         }
       } catch (error) {
         if (axios.isCancel(error)) {
-          console.log('Request canceled', error.message);
+           console.log('Request canceled', error.message);
         } else {
-          setDeadend(true)
+        setDeadend(true)
           throw error
         }
       }
@@ -77,8 +75,7 @@ const Profile = () => {
 
     getUser()
     return () => {
-      console.log('unmount and cancel running axios request');
-      s.current.cancel('Operation canceled by the user.');
+      source.cancel('Operation canceled by the user.');
     };
   }, [username])
 

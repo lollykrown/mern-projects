@@ -3,10 +3,13 @@ import { toast } from "react-toastify";
 import { FormWrapper } from "./Login";
 import useInput from "../hooks/useInput";
 import logo from "../assets/logo.png";
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
 
 const Signup = (props) => {
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+
   const email = useInput("");
   const fullname = useInput("");
   const username = useInput("");
@@ -41,7 +44,7 @@ const Signup = (props) => {
 
     console.log(body)
     try {
-      const res = await axios.post('/signup', body, {
+      const res = await Axios.post('/signup', body, {
         cancelToken: source.token
       })
 

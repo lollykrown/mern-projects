@@ -1,4 +1,4 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { toast } from "react-toastify";
 import styled from "styled-components";
@@ -7,8 +7,8 @@ import Avatar from "../styles/Avatar";
 import useInput from "../hooks/useInput";
 import { UserContext } from "../context/UserContext";
 import { uploadImage } from "../utils";
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
 
 export const Wrapper = styled.div`
   padding: 1rem;
@@ -97,14 +97,14 @@ const ProfileForm = () => {
   const bio = useInput(user.bio);
   const website = useInput(user.website);
 
-  const signal = useRef(axios.CancelToken.source());
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
 
   const handleRequest = async (b) => {
     try {
-      const res = await axios.put('/users', b, {
+      const res = await Axios.put('/users', b, {
         cancelToken: source.token
       })
-      console.log(res.data)
 
       setUser(res.data.data);
       localStorage.setItem("user", JSON.stringify(res.data));

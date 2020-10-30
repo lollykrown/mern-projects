@@ -6,6 +6,7 @@ import Avatar from "../styles/Avatar";
 import { UserContext } from "../context/UserContext";
 import axios from '../utils/axios'
 import { source } from '../utils/axios'
+import { toast } from "react-toastify";
 
 const Wrapper = styled.div`
   width: 280px;
@@ -106,11 +107,13 @@ const Suggestions = () => {
           setUsers(res.data.data.filter((user) => !user.isFollowing));
 
       } catch (error) {
-        if (axios.isCancel(error)) {
-          console.log('Request canceled', error.message);
-        } else {
-          throw error
-        }
+        // if (source.isCancel(error)) {
+        //   console.log('Request canceled', error.message);
+        // } else {
+        //   setDeadend(true)
+        //   throw error
+        // }
+        toast.error(error)
       }
     };
     

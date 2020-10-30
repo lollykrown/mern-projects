@@ -6,8 +6,8 @@ import useInput from "../hooks/useInput";
 import { FeedContext } from "../context/FeedContext";
 import { uploadImage } from "../utils";
 import { NewPostIcon } from "./Icons";
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
 
 const NewPostWrapper = styled.div`
   .newpost-header {
@@ -56,6 +56,9 @@ const NewPost = () => {
   const [preview, setPreview] = useState("");
   const [postImage, setPostImage] = useState("");
 
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+  
   const handleUploadImage = (e) => {
     if (e.target.files[0]) {
       const reader = new FileReader();
@@ -98,7 +101,7 @@ const NewPost = () => {
     };
 
     try {
-      const res = await axios.post('/posts', body, {
+      const res = await Axios.post('/posts', body, {
         cancelToken: source.token
       })
       console.log(res)

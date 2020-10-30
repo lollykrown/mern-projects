@@ -4,8 +4,8 @@ import styled from "styled-components";
 import useInput from "../hooks/useInput";
 import { UserContext } from "../context/UserContext";
 import logo from "../assets/logo.png";
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
 import Loader from "./Loader";
 
 export const FormWrapper = styled.div`
@@ -53,6 +53,9 @@ export const FormWrapper = styled.div`
 
 const Login = (props) => {
 
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+
   const { setUser } = useContext(UserContext);
   const username = useInput("");
   const password = useInput("");
@@ -69,7 +72,7 @@ const Login = (props) => {
     const body = { username: username.value, password: password.value };
 
     try {
-      const res = await axios.post('/login', body, {
+      const res = await Axios.post('/login', body, {
         headers: {
           'Content-Type': 'application/json'
         },

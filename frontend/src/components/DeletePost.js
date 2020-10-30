@@ -2,16 +2,18 @@ import React, { useContext } from "react";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
 import { FeedContext } from "../context/FeedContext";
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
 
 const DeletePost = ({ postId, closeModal, goToHome }) => {
   const { feed, setFeed } = useContext(FeedContext);
   const history = useHistory();
-
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+  
   const handleRequest = async (id) => {
     try {
-      await axios.delete(`/posts/${id}`, {
+      await Axios.delete(`/posts/${id}`, {
         cancelToken: source.token
       })
 

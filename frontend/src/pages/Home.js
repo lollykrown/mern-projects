@@ -8,8 +8,10 @@ import { FeedContext } from "../context/FeedContext";
 import { UserContext } from "../context/UserContext";
 import { toast } from "react-toastify";
 import { useHistory } from "react-router-dom";
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
+import PostPreview from '../components/PostPreview'
+
 
 const Wrapper = styled.div`
   @media screen and (max-width: 1040px) {
@@ -25,11 +27,13 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
 
   const history = useHistory();
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
   
   useEffect(() => {
     const checkAuthStatus = async () => {    
       try {
-        const res = await axios.get('/me',  {
+        const res = await Axios.get('/me',  {
           cancelToken: source.token 
         })
           // console.log('checking', res)
@@ -67,7 +71,7 @@ const Home = () => {
   useEffect(() => {
     const getPosts = async () => {    
       try {
-        const res = await axios.get('/posts',  {
+        const res = await Axios.get('/posts',  {
           cancelToken: source.token 
         })
           setFeed(res.data.data)

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 import LikePost from "./LikePost";
@@ -12,8 +12,9 @@ import { timeSince } from "../utils";
 import { MoreIcon, CommentIcon, InboxIcon } from "./Icons";
 import { toast } from "react-toastify";
 import ModalContentWrapper from '../styles/ModalContentWrapper'
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
+import { UserContext } from "../context/UserContext";
 
 export const ModalContent = ({ hideGotoPost, postId, closeModal }) => {
   const history = useHistory();
@@ -39,6 +40,7 @@ export const PostWrapper = styled.div`
   background: ${(props) => props.theme.white};
   border: 1px solid ${(props) => props.theme.borderColor};
   margin-bottom: 1.5rem;
+	cursor: pointer;
 
   .post-header-wrapper {
     display: flex;
@@ -107,6 +109,12 @@ export const PostWrapper = styled.div`
 `;
 
 const Post = ({ post }) => {
+  const { user } = useContext(UserContext);
+
+  // has the loggedin user liked the post??
+  const likes = post.likes.map((like) => like.toString());
+  post.isLiked = likes.includes(user._id);
+
   const comment = useInput("");
   const history = useHistory();
 
@@ -118,10 +126,12 @@ const Post = ({ post }) => {
 
   const incLikes = () => setLikes(likesState + 1);
   const decLikes = () => setLikes(likesState - 1);
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
 
   const handleRequest = async (newc, id) => {
     try {
-      const res = await axios.post(`/posts/${id}/comments`, { text: comment.value }, {
+      const res = await Axios.post(`/posts/${id}/comments`, { text: comment.value }, {
         cancelToken: source.token
       })
       console.log('comments', res.data)
@@ -138,7 +148,6 @@ const Post = ({ post }) => {
     }
     return () => {
       source.cancel('Operation canceled by the user.');
-      console.log('unmount and cancel running axios request');
     };
   };
 
@@ -177,6 +186,7 @@ const Post = ({ post }) => {
       </div>
 
       <img
+        // onClick={() => history.push(`/p/${post._id}`)}
         className="post-img"
         src={post.files?.length && post.files[0]}
         alt="post-img"
@@ -184,7 +194,7 @@ const Post = ({ post }) => {
 
       <div className="post-actions">
         <LikePost
-          isLiked={post.isLiked}
+          isLiked={post?.isLiked}
           postId={post._id}
           incLikes={incLikes}
           decLikes={decLikes}

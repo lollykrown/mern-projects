@@ -5,19 +5,21 @@ import Follow from "./Follow";
 import Loader from "./Loader";
 import { toast } from "react-toastify";
 import Wrapper from "../styles/Wrapper";
-import axios from '../utils/axios'
-import { source } from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
 
 const NoFeedSuggestions = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const history = useHistory();
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
 
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const res = await axios.get('/users', {
+        const res = await Axios.get('/users', {
           cancelToken: source.token
         })
 
@@ -37,7 +39,6 @@ const NoFeedSuggestions = () => {
 
     getUsers()
     return () => {
-      console.log('unmount and cancel running axios request');
       source.cancel('Operation canceled by the user.');
     };
   }, [])
