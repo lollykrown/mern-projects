@@ -1,8 +1,8 @@
 {
-  "name": "tinder-clone",
+  "name": "instagram-clone",
   "version": "1.0.0",
   "description": "",
-  "main": "test.js",
+  "main": "app.js",
   "scripts": {
     "start": "NODE_ENV=production node app.js",
     "dev": "nodemon app.js",
