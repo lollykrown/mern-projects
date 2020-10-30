@@ -16,7 +16,7 @@ const LikePost = ({ isLiked, postId, incLikes, decLikes }) => {
 
   const handleRequest = async (action) => {
     try {
-      const res = await Axios.get(`/posts/${postId}/${action}`, {
+      await Axios.get(`/posts/${postId}/${action}`, {
         cancelToken: source.token
       })
     } catch (err) {

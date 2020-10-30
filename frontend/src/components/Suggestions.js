@@ -121,7 +121,7 @@ const Suggestions = () => {
     return () => {
       source.cancel('Operation canceled by the user.');
     };
-  }, [])
+  }, [users])
 
   return (
     <Wrapper>
