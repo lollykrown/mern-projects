@@ -64,12 +64,12 @@ app.use(session(sessionOptions));
 require('./src/config/passport.js')(app);
 
 // Serve static assets if in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static('clent/build'))
-  app.get('*', (req, res) => {
+// if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'))
+  app.get('/', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
   })
-}
+//}
 
 const authRouter = require("./src/routes/authRoutes")();
 const postRouter = require("./src/routes/postRoutes")();
