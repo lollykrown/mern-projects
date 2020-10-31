@@ -78,7 +78,7 @@ const Login = (props) => {
     try {
       const res = await Axios.get('/github', {
         headers: {
-          'Authorization': '9ac56299f02af8ea34cc3ab0fe0a73a2ebf467a9'
+          'Authorization': 'c137cf89655e50b2f36dedbe624dac3485510cf0'
         },
         cancelToken: source.token
       })
@@ -102,8 +102,8 @@ const Login = (props) => {
         toast.error(err.message)
       }
     }
-
   }
+  
   const handleLogin = async (e) => {
     e.preventDefault();
 

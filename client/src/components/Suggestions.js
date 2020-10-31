@@ -4,9 +4,9 @@ import styled from "styled-components";
 import Follow from "./Follow";
 import Avatar from "../styles/Avatar";
 import { UserContext } from "../context/UserContext";
-import axios from '../utils/axios'
+import axios from 'axios';
+import Axios from '../utils/axios'
 import { source } from '../utils/axios'
-import { toast } from "react-toastify";
 
 const Wrapper = styled.div`
   width: 280px;
@@ -63,6 +63,9 @@ const StyledUserCard = styled.div`
   align-items: center;
   margin-bottom: 1rem;
 
+  .capitalize{
+    text-transform:capitalize;
+  }
   span {
     color: ${(props) => props.theme.secondaryColor};
   }
@@ -88,7 +91,7 @@ export const UserCard = ({ user }) => {
         >
           {user.username}
         </h4>
-        <span>{user.fullname}</span>
+        <span className="capitalize">{user.fullname}</span>
       </div>
     </StyledUserCard>
   );
@@ -101,19 +104,17 @@ const Suggestions = () => {
   useEffect(() => {
     const loadUsers = async () => {    
       try {
-        const res = await axios.get('/users',  {
+        const res = await Axios.get('/users',  {
           cancelToken: source.token })
 
           setUsers(res.data.data.filter((user) => !user.isFollowing));
 
       } catch (error) {
-        // if (source.isCancel(error)) {
-        //   console.log('Request canceled', error.message);
-        // } else {
-        //   setDeadend(true)
-        //   throw error
-        // }
-        toast.error(error)
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        } else {
+          throw error
+        }
       }
     };
     
@@ -130,11 +131,11 @@ const Suggestions = () => {
       <div className="suggestions">
         <h3>Suggestions For You</h3>
         {users.slice(0, 4).map((user) => (
-          <div key={user.username} className="suggestions-usercard">
-            <UserCard user={user} />
-            <Follow nobtn isFollowing={user.isFollowing} userId={user._id} />
-          </div>
-        ))}
+            <div key={user.username} className="suggestions-usercard">
+              <UserCard user={user} />
+              <Follow nobtn isFollowing={user.isFollowing} userId={user._id} />
+            </div>
+          ))}
         {users.length === 0 && <p>Right now, there's no suggestions for you</p>}
       </div>
     </Wrapper>

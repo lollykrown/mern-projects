@@ -45,6 +45,9 @@ const Wrapper = styled.div`
   font-size: 1.1rem;
   margin-bottom: 2rem;
 
+  .capitalize{
+    text-transform: capitalize;
+  }
   .avatar {
     width: 180px;
     height: 180px;
@@ -290,7 +293,7 @@ const ProfileHeader = ({ profile }) => {
           </div>
 
           <div className="bio">
-            <span className="bold">{profile?.fullname}</span>
+            <span className="bold capitalize">{profile?.fullname}</span>
             <p>{profile?.bio}</p>
             <a
               href={profile?.website || 'http:///lollykrown.xyz'}
