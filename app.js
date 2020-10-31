@@ -84,5 +84,5 @@ app.use(errorHandler);
 
 app.listen(
   port,
-  console.log(`server started in ${process.env.NODE_ENV} mode at port ${port}`)
+  console.log(`🌎  => server started in ${process.env.NODE_ENV} mode at port ${port}`)
 );
