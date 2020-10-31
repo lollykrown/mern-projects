@@ -76,7 +76,10 @@ const Login = (props) => {
 
   const googleLogin = async() =>{
     try {
-      const res = await Axios.get('/auth/github', {
+      const res = await Axios.get('/github', {
+        headers: {
+          'Authorization': '9ac56299f02af8ea34cc3ab0fe0a73a2ebf467a9'
+        },
         cancelToken: source.token
       })
 

@@ -8,12 +8,20 @@ function router() {
     //sign up with email
     authRouter.route("/signup").post(signUpWithEmail)
 
+    // when login failed, send failed msg
+authRouter.route("/login/failed").get((req, res) => {
+    res.status(401).json({
+      success: false,
+      message: "user failed to authenticate."
+    });
+  });
+
     // Signup/login with github
-    authRouter.get('/auth/github',
+    authRouter.get('/github',
         passport.authenticate('github', { scope: ['read:user', 'user:email'] }))
 
     // The middleware receives the data from Github and runs the function on Strategy config
-    authRouter.get('/auth/github/callback', passport.authenticate('github'),
+    authRouter.get('/github/callback', passport.authenticate('github'),
         (req, res) => {
             //res.send(req.user)
             res.status(200).json({ message: "you reached the redirect URI", user: req.user });

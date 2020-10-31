@@ -9,7 +9,6 @@ const path = require('path')
 const MongoStore = require('connect-mongo')(session);
 
 const errorHandler = require("./src/middlewares/errorHandler");
-const passport = require("passport");
 
 //App config
 const app = express();

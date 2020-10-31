@@ -11,7 +11,7 @@ module.exports = function googleStrategy() {
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
     // callbackURL: 'http://127.0.0.1:8001/auth/github/callback'
-    callbackURL: '/auth/github/callback'
+    callbackURL: '/github/callback'
   },
     function (accessToken, refreshToken, profile, done) {
       // User.findOrCreate({ googleId: profile.id }, function (err, user) {
