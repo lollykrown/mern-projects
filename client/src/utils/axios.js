@@ -8,6 +8,8 @@ const instance = axios.create({
     // baseURL: 'https://mern-backend.herokuapp.com',
     headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Header': '*'
+
         // "Access-Control-Allow-Credentials": "*"
     },
     withCredentials: true,
