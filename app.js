@@ -47,7 +47,7 @@ const corsOptions = {
   origin: ['http://localhost:3000','https://kay-insta.netlify.app'],
   methods: ['POST', 'PUT', 'GET', 'PATCH', 'OPTIONS', 'DELETE', 'HEAD'],
   credentials: true,
-  allowedHeaders: "Content-Type, Authorization, X-Requested-With",
+  allowedHeaders: ["Access-Control-Allow-Origin", "Content-Type, Authorization, X-Requested-With"],
 
   // "preflightContinue": false,
   // "optionsSuccessStatus": 204,
