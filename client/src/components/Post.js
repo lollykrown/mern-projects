@@ -11,9 +11,9 @@ import Avatar from "../styles/Avatar";
 import { timeSince } from "../utils";
 import { MoreIcon, CommentIcon, InboxIcon } from "./Icons";
 import { toast } from "react-toastify";
-import ModalContentWrapper from '../styles/ModalContentWrapper'
-import axios from 'axios';
-import Axios from '../utils/axios'
+import ModalContentWrapper from "../styles/ModalContentWrapper";
+import axios from "axios";
+import Axios from "../utils/axios";
 import { UserContext } from "../context/UserContext";
 
 export const ModalContent = ({ hideGotoPost, postId, closeModal }) => {
@@ -40,7 +40,7 @@ export const PostWrapper = styled.div`
   background: ${(props) => props.theme.white};
   border: 1px solid ${(props) => props.theme.borderColor};
   margin-bottom: 1.5rem;
-	cursor: pointer;
+  cursor: pointer;
 
   .post-header-wrapper {
     display: flex;
@@ -131,36 +131,38 @@ const Post = ({ post }) => {
 
   const handleRequest = async (newc, id) => {
     try {
-      const res = await Axios.post(`/posts/${id}/comments`, { text: comment.value }, {
-        cancelToken: source.token
-      })
-      console.log('comments', res.data)
+      const res = await Axios.post(
+        `/posts/${id}/comments`,
+        { text: comment.value },
+        {
+          cancelToken: source.token,
+        }
+      );
       setNewComments([...newc, res.data.data]);
-
     } catch (err) {
       if (axios.isCancel(err)) {
-        console.log('Get request canceled');
-        toast.error(err.message)
+        console.log("Get request canceled");
+        toast.error(err.message);
       } else {
-        console.log(err)
-        toast.error(err.message)
+        console.log(err);
+        toast.error(err.message);
       }
     }
     return () => {
-      source.cancel('Operation canceled by the user.');
+      source.cancel("Operation canceled by the user.");
     };
   };
 
   const handleAddComment = (e) => {
     if (e.keyCode === 13) {
       e.preventDefault();
-      handleRequest(newComments, post._id)
+      handleRequest(newComments, post._id);
       comment.setValue("");
     }
   };
 
   return (
-    <PostWrapper>
+    <PostWrapper onClick={() => history.push(`/p/${post._id}`)}>
       <div className="post-header-wrapper">
         <div className="post-header">
           <Avatar
@@ -182,7 +184,9 @@ const Post = ({ post }) => {
             <ModalContent postId={post._id} closeModal={closeModal} />
           </Modal>
         )}
-        {post.isMine && <MoreIcon onClick={() => setShowModal(true)} />}
+        {post.user._id === user._id && (
+          <MoreIcon onClick={() => setShowModal(true)} />
+        )}
       </div>
 
       <img
@@ -211,15 +215,17 @@ const Post = ({ post }) => {
           </span>
         )}
 
-        {post && <p>
-          <span
-            onClick={() => history.push(`/${post.user?.username}`)}
-            className="pointer username bold"
-          >
-            {post.user?.username}
-          </span>
-          {post.caption}
-        </p>}
+        {post && (
+          <p>
+            <span
+              onClick={() => history.push(`/${post.user?.username}`)}
+              className="pointer username bold"
+            >
+              {post.user?.username}
+            </span>
+            {post.caption}
+          </p>
+        )}
 
         {post.commentsCount > 2 && (
           <span
@@ -230,13 +236,15 @@ const Post = ({ post }) => {
           </span>
         )}
 
-        {post.comments.length > 0 && post.comments.slice(0, 2).map((c) => (
-          <Comment key={c._id} hideavatar={true} comment={c} />
-        ))}
+        {post.comments.length > 0 &&
+          post.comments
+            .slice(0, 2)
+            .map((c) => <Comment key={c._id} hideavatar={true} comment={c} />)}
 
-        {newComments && newComments.map((c) => (
-          <Comment key={c._id} hideavatar={true} comment={c} />
-        ))}
+        {newComments &&
+          newComments.map((c) => (
+            <Comment key={c._id} hideavatar={true} comment={c} />
+          ))}
 
         <span className="secondary">{timeSince(post?.createdAt)} ago</span>
       </div>

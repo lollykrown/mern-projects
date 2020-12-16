@@ -7,6 +7,7 @@ import Auth from "./components/Auth";
 import Routing from "./Routing";
 import { UserContext } from "./context/UserContext";
 import { ThemeContext } from "./context/ThemeContext";
+import { BrowserRouter as Router } from "react-router-dom";
 
 const App = () => {
   const { user } = useContext(UserContext);
@@ -16,7 +17,9 @@ const App = () => {
     <StyledThemeProvider theme={theme}>
       <GlobalStyle />
       <ToastContainer autoClose={2000} closeButton={false} />
+      <Router>
       {user ? <Routing /> : <Auth />}
+      </Router>
     </StyledThemeProvider>
   );
 };

@@ -72,6 +72,8 @@ const Home = () => {
         const res = await Axios.get('/posts',  {
           cancelToken: source.token 
         })
+        console.log('feed',res.data.data)
+
           setFeed(res.data.data)
           setLoading(false);
       } catch (error) {

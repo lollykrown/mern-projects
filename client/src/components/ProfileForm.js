@@ -7,8 +7,8 @@ import Avatar from "../styles/Avatar";
 import useInput from "../hooks/useInput";
 import { UserContext } from "../context/UserContext";
 import { uploadImage } from "../utils";
-import axios from 'axios';
-import Axios from '../utils/axios'
+import axios from "axios";
+import Axios from "../utils/axios";
 
 export const Wrapper = styled.div`
   padding: 1rem;
@@ -50,7 +50,8 @@ export const Wrapper = styled.div`
     display: none;
   }
 
-  span {
+  span,
+  p {
     color: ${(props) => props.theme.blue};
     cursor: pointer;
   }
@@ -102,25 +103,24 @@ const ProfileForm = () => {
 
   const handleRequest = async (b) => {
     try {
-      const res = await Axios.put('/users', b, {
-        cancelToken: source.token
-      })
+      const res = await Axios.put("/users", b, {
+        cancelToken: source.token,
+      });
 
       setUser(res.data.data);
       localStorage.setItem("user", JSON.stringify(res.data));
       history.push(`/${b.username || user.username}`);
-
     } catch (err) {
       if (axios.isCancel(err)) {
-        console.log('Get request canceled');
-        toast.error(err.message)
+        console.log("Get request canceled");
+        toast.error(err.message);
       } else {
-        console.log(err)
-        toast.error(err.message)
+        console.log(err);
+        toast.error(err.message);
       }
     }
     return () => {
-      source.cancel('Operation canceled by the user.');
+      source.cancel("Operation canceled by the user.");
     };
   };
   const handleImageUpload = (e) => {
@@ -149,7 +149,7 @@ const ProfileForm = () => {
       website: website.value,
       avatar: newAvatar || user.avatar,
     };
-    handleRequest(body)
+    handleRequest(body);
   };
 
   return (
@@ -182,6 +182,9 @@ const ProfileForm = () => {
               type="file"
               onChange={handleImageUpload}
             />
+            <p onClick={() => history.push("change-password")}>
+              Reset Password
+            </p>
           </div>
         </div>
 
@@ -220,7 +223,6 @@ const ProfileForm = () => {
             onChange={bio.onChange}
           ></textarea>
         </div>
-
         <Button>Submit</Button>
       </form>
     </Wrapper>

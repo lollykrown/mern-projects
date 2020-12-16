@@ -4,7 +4,7 @@ const passport = require('passport');
 const authController = require("../controllers/authController");
 
 function router() {
-    const { signUpWithEmail, signOut } = authController()
+    const { signUpWithEmail, signOut, changePassword } = authController()
     //sign up with email
     authRouter.route("/signup").post(signUpWithEmail)
 
@@ -39,6 +39,7 @@ authRouter.route("/login/failed").get((req, res) => {
                 }
                 if (!user) {
                     return res.status(400).json({
+                        status:false,
                         message: info.message,
                         error: "Cannot log in",
                     });
@@ -77,6 +78,9 @@ authRouter.route("/login/failed").get((req, res) => {
     });
 
     authRouter.route("/logout").get(signOut);
+
+    authRouter.route("/change-password").put(changePassword);
+
 
     return authRouter;
 }

@@ -227,6 +227,8 @@ const ProfileHeader = ({ profile }) => {
     setUser(null);
     localStorage.removeItem("user");
     toast.success("You are logged out");
+    window.location.reload();
+
   };
 
   useEffect(() => setFollowers(profile?.followersCount), [profile]);
@@ -295,6 +297,7 @@ const ProfileHeader = ({ profile }) => {
           <div className="bio">
             <span className="bold capitalize">{profile?.fullname}</span>
             <p>{profile?.bio}</p>
+            <p>{profile?.email}</p>
             <a
               href={profile?.website || 'http:///lollykrown.xyz'}
               target="_blank"

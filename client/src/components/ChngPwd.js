@@ -1,12 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import useInput from "../hooks/useInput";
-import { UserContext } from "../context/UserContext";
 import logo from "../assets/logo.png";
 import axios from 'axios';
 import Axios from '../utils/axios'
 import Loader from "./Loader";
+import { useHistory } from "react-router-dom";
 
 export const FormWrapper = styled.div`
   background-color: ${(props) => props.theme.white};
@@ -64,70 +64,47 @@ export const FormWrapper = styled.div`
   }
 `;
 
-const Login = (props) => {
-
+const ChngPwd = (props) => {
+  const history = useHistory()
   const CancelToken = axios.CancelToken;
   const source = CancelToken.source();
 
-  const { setUser } = useContext(UserContext);
-  const username = useInput("");
-  const password = useInput("");
+  const email = useInput("");
+  const newPassword = useInput("");
+  const confirmPassword = useInput("");
   const [loading, setLoading] = useState(false);
-
-  const googleLogin = async() =>{
-    try {
-      const res = await Axios.get('/github', {
-        headers: {
-          'Authorization': 'c137cf89655e50b2f36dedbe624dac3485510cf0'
-        },
-        cancelToken: source.token
-      })
-
-      if (!res.status) {
-        toast.error(res.data.message)
-        return;
-      }
-      localStorage.setItem("user", JSON.stringify(res.data.data));
-      // setUser(res.data.data);
-      console.log('google',res)
-      toast.success("Login successful");
-      setLoading(false);
-
-    } catch (err) {
-      if (axios.isCancel(err)) {
-        console.log('Get request canceled');
-        toast.error(err.message)
-      } else {
-        console.log(err)
-        toast.error(err.message)
-      }
-    }
-  }
   
   const handleLogin = async (e) => {
     e.preventDefault();
 
     setLoading(true)
-    if (!username.value || !password.value) {
-      return toast.error("Please fill in both the fields");
+
+    const location = {
+      pathname: '/',
+      state: { changePassword: true }
+    }
+    if (!newPassword.value || !confirmPassword.value) {
+      // history.push(location)
+      window.location.reload();
+      return toast.error("Please fill in all the fields");
     }
 
-    const body = { username: username.value, password: password.value };
+    const body = { email: email.value, newPassword: newPassword.value, confirmPassword: confirmPassword.value };
     try {
-      const res = await Axios.post('/login', body, {
-        cancelToken: source.token
-      })
+        const res = await Axios.put("/change-password", body, {
+            cancelToken: source.token,
+          });
+    
+          res.data.status && toast.info(res.data.message);
 
       if (!res.status) {
-        console.log(res.data)
         toast.error(res.data.message)
         window.location.reload();
         return;
       }
-      localStorage.setItem("user", JSON.stringify(res.data.data));
-      setUser(res.data.data);
-      toast.success("Login successful");
+
       setLoading(false);
+      window.location.reload();
 
     } catch (err) {
       setLoading(false)
@@ -140,8 +117,9 @@ const Login = (props) => {
       }
     }
 
-    username.setValue("");
-    password.setValue("");
+    email.setValue("")
+    newPassword.setValue("");
+    confirmPassword.setValue("");
     return () => {
       source.cancel('Operation canceled by the user.');
     };
@@ -155,26 +133,31 @@ const Login = (props) => {
     <FormWrapper onSubmit={handleLogin}>
       <img className="logo" src={logo} alt="logo" />
       <form>
-        <input
+      <input
           type="text"
-          placeholder="username"
-          value={username.value}
-          onChange={username.onChange}
+          placeholder="Email"
+          value={email.value}
+          onChange={email.onChange}
         />
         <input
           type="password"
-          placeholder="password"
-          value={password.value}
-          onChange={password.onChange}
+          placeholder="New Password"
+          value={newPassword.value}
+          onChange={newPassword.onChange}
+        />
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          value={confirmPassword.value}
+          onChange={confirmPassword.onChange}
         />
         {/* <Link to="/accounts/change-password"><p>Change Password</p></Link> */}
 
-        <input type="submit" value="Log In" className="login-btn" />
+        <input type="submit" value="Submit" className="login-btn" />
       </form>
-      <button onClick={() => googleLogin()} className="login-btn github">Log In with Github</button>
 
       <div>
-      <p><span onClick={props.changepassword}>Change Password</span></p>
+      <p><span onClick={props.login}>Login</span></p>
 
         <p>
           Don't have an account? <span onClick={props.signup}>Sign up</span>
@@ -184,4 +167,4 @@ const Login = (props) => {
   );
 };
 
-export default Login;
+export default ChngPwd;
