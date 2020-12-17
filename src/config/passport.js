@@ -1,9 +1,9 @@
 const passport = require('passport');
 require('./strategies/local.strategy')();
 // require('./strategies/fb.strategy')();
-// require('./strategies/twitter.strategy')();
+require('./strategies/twitter.strategy')();
 // require('./strategies/google.strategy')();
-// require('./strategies/github.strategy')();
+require('./strategies/github.strategy')();
 
 const User = require("../models/User");
 

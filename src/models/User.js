@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please enter your email"],
     trim: true,
     lowercase: true,
-    unique: true,
+    // unique: true,
   },
   password: {
     type: String,
@@ -54,6 +54,9 @@ const UserSchema = new mongoose.Schema({
     default: Date.now,
   },
   githubId: {
+    type:String
+  },
+  twitterId: {
     type:String
   }
 });

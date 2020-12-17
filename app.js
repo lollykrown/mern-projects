@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const cors = require("cors");
 const path = require('path')
 const MongoStore = require('connect-mongo')(session);
+const debug = require('debug')('app:root')
 
 const errorHandler = require("./src/middlewares/errorHandler");
 
@@ -30,7 +31,7 @@ const sessionOptions = {
     //secure: true,
     path: '/',
     httpOnly: true,
-    maxAge: 2592000000 // 30 x 24 x 60 x 60 x 1000sec   //30 days
+    maxAge: 60000//2592000000 // 30 x 24 x 60 x 60 x 1000sec   //30 days
   },
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
   name: '_sid',
@@ -44,7 +45,7 @@ db.once('open', function () {
 
 // Set up CORS
 const corsOptions = {
-  origin: ['http://localhost:3000', 'https://mern-backend.herokuapp.com','https://kay-insta.netlify.app'],
+  origin: ['http://127.0.0.1:3000', 'https://mern-backend.herokuapp.com','https://kay-insta.netlify.app'],
   methods: ['POST', 'PUT', 'GET', 'PATCH', 'OPTIONS', 'DELETE', 'HEAD'],
   credentials: true,
   allowedHeaders: ["Access-Control-Allow-Origin", "Content-Type, Authorization, X-Requested-With"],
@@ -82,5 +83,5 @@ app.use(errorHandler);
 
 app.listen(
   port,
-  console.log(`🌎  => server started in ${process.env.NODE_ENV} mode at port ${port}`)
+  debug(`🌎  => server started in ${process.env.NODE_ENV} mode at port ${port}`)
 );

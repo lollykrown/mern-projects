@@ -8,6 +8,8 @@ import Button from "../styles/Button";
 import { UserContext } from "../context/UserContext";
 import { OptionsIcon } from "./Icons";
 import { CloseIcon } from "./Icons";
+import Axios from '../utils/axios'
+import axios from 'axios';
 
 const MobileWrapper = styled.div`
   margin: 1rem 0;
@@ -223,11 +225,41 @@ const ProfileHeader = ({ profile }) => {
   const incFollowers = () => setFollowers(followersState + 1);
   const decFollowers = () => setFollowers(followersState - 1);
 
-  const handleLogout = () => {
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+
+  const handleLogout = async () => {
     setUser(null);
     localStorage.removeItem("user");
-    toast.success("You are logged out");
-    window.location.reload();
+
+    try {
+      const res = await Axios.get('/logout', {
+        cancelToken: source.token
+      })
+
+      console.log('logout',res)
+
+      if (!res.status) {
+        console.log(res.data)
+        toast.error(res.data.message)
+        window.location.reload();
+        return;
+      }
+        window.location.reload();
+        toast.success(res.data.message);
+
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        toast.error(err.message)
+      } else {
+        console.log(err.response.data.error)
+        toast.error(err.response.data.message)
+      }
+    }
+
+    return () => {
+      source.cancel('Operation canceled by the user.');
+    };
 
   };
 

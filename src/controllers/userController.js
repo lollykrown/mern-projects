@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Post = require("../models/Post");
+const debug = require('debug')('app:userController')
 
 function userController() {
 
@@ -333,7 +334,7 @@ function userController() {
     unfollow,
     feed,
     searchUser,
-    editUser
+    editUser,
   };
 }
 
