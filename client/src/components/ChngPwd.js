@@ -6,7 +6,6 @@ import logo from "../assets/logo.png";
 import axios from 'axios';
 import Axios from '../utils/axios'
 import Loader from "./Loader";
-import { useHistory } from "react-router-dom";
 
 export const FormWrapper = styled.div`
   background-color: ${(props) => props.theme.white};
@@ -65,7 +64,6 @@ export const FormWrapper = styled.div`
 `;
 
 const ChngPwd = (props) => {
-  const history = useHistory()
   const CancelToken = axios.CancelToken;
   const source = CancelToken.source();
 
@@ -79,10 +77,10 @@ const ChngPwd = (props) => {
 
     setLoading(true)
 
-    const location = {
-      pathname: '/',
-      state: { changePassword: true }
-    }
+    // const location = {
+    //   pathname: '/',
+    //   state: { changePassword: true }
+    // }
     if (!newPassword.value || !confirmPassword.value) {
       // history.push(location)
       window.location.reload();

@@ -31,7 +31,7 @@ const sessionOptions = {
     //secure: true,
     path: '/',
     httpOnly: true,
-    maxAge: 60000//2592000000 // 30 x 24 x 60 x 60 x 1000sec   //30 days
+    maxAge: 2592000000 // 30 x 24 x 60 x 60 x 1000sec   //30 days
   },
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
   name: '_sid',
