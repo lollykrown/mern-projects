@@ -40,8 +40,9 @@ const sessionOptions = {
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
   // log.info(`Connected to MongoDB: ${db.host}`);
-  console.log(`Connected to MongoDB: ${db.host}`);
+  debug(`Connected to MongoDB: ${db.host}`);
 });
+
 
 // Set up CORS
 const corsOptions = {
