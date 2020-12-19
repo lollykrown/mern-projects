@@ -162,7 +162,7 @@ const Post = ({ post }) => {
   };
 
   return (
-    <PostWrapper onClick={() => history.push(`/p/${post._id}`)}>
+    <PostWrapper >
       <div className="post-header-wrapper">
         <div className="post-header">
           <Avatar
@@ -190,7 +190,7 @@ const Post = ({ post }) => {
       </div>
 
       <img
-        // onClick={() => history.push(`/p/${post._id}`)}
+        onClick={() => history.push(`/p/${post._id}`)}
         className="post-img"
         src={post.files?.length && post.files[0]}
         alt="post-img"

@@ -231,6 +231,7 @@ const ProfileHeader = ({ profile }) => {
   const handleLogout = async () => {
     setUser(null);
     localStorage.removeItem("user");
+    history.push(`/`);
 
     try {
       const res = await Axios.get('/logout', {

@@ -119,7 +119,7 @@ const Login = (props) => {
 
   const githubLogin = async() =>{
     try {
-      const res = await Axios.get('https://mern-backend.herokuapp.com/auth/github', {
+      const res = await Axios.get('http://127.0.0.1:8001/auth/github', {
         // headers: {
         //   'Authorization': 'c137cf89655e50b2f36dedbe624dac3485510cf0'
         // },
@@ -216,6 +216,9 @@ const Login = (props) => {
       </form>
       <a className="login-btn github" href="https://mern-backend.herokuapp.com/auth/github">Log In with Github</a>
       <a className="login-btn twitter" href="https://mern-backend.herokuapp.com/auth/twitter">Log In with Twitter</a>
+
+      {/* <a className="login-btn github" href="http://127.0.0.1:8001/auth/github">Log In with Github</a>
+      <a className="login-btn twitter" href="http://127.0.0.1:8001/auth/twitter">Log In with Twitter</a> */}
 
       {/* <button onClick={() => githubLogin()} className="login-btn github">Log In with Github</button> */}
 
