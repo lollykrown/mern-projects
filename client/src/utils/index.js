@@ -72,6 +72,6 @@ export const uploadImage = (file) => {
   data.append("upload_preset", "instaclone");
 
   // console.log('env', process.env.REACT_APP_CLOUDINARY_URL)
-  return axios.post('https://api.cloudinary.com/v1_1/lollykrown/upload', data)
+  return axios.post(process.env.REACT_APP_CLOUDINARY_URL, data)
   //).then((res) => res.json());
 };

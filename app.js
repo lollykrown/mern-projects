@@ -46,7 +46,7 @@ db.once('open', function () {
 
 // Set up CORS
 const corsOptions = {
-  origin: ['http://127.0.0.1:3000', 'https://mern-backend.herokuapp.com','https://kay-insta.netlify.app'],
+  origin: ['http://127.0.0.1:3000','http://localhost:3000', 'https://mern-backend.herokuapp.com','https://kay-insta.netlify.app'],
   methods: ['POST', 'PUT', 'GET', 'PATCH', 'OPTIONS', 'DELETE', 'HEAD'],
   credentials: true,
   allowedHeaders: ["Access-Control-Allow-Origin", "Content-Type, Authorization, X-Requested-With"],
