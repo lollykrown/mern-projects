@@ -214,11 +214,11 @@ const Login = (props) => {
 
         <input type="submit" value="Log In" className="login-btn" />
       </form>
-      <a className="login-btn github" href="https://mern-backend.herokuapp.com/auth/github">Log In with Github</a>
-      <a className="login-btn twitter" href="https://mern-backend.herokuapp.com/auth/twitter">Log In with Twitter</a>
+      {/* <a className="login-btn github" href="https://mern-backend.herokuapp.com/auth/github">Log In with Github</a>
+      <a className="login-btn twitter" href="https://mern-backend.herokuapp.com/auth/twitter">Log In with Twitter</a> */}
 
-      {/* <a className="login-btn github" href="http://127.0.0.1:8001/auth/github">Log In with Github</a>
-      <a className="login-btn twitter" href="http://127.0.0.1:8001/auth/twitter">Log In with Twitter</a> */}
+      <a className="login-btn github" href="http://127.0.0.1:8001/auth/github">Log In with Github</a>
+      <a className="login-btn twitter" href="http://127.0.0.1:8001/auth/twitter">Log In with Twitter</a>
 
       {/* <button onClick={() => githubLogin()} className="login-btn github">Log In with Github</button> */}
 

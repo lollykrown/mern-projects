@@ -11,8 +11,8 @@ module.exports = function twitterStrategy() {
   passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    // callbackURL: 'http://127.0.0.1:8001/auth/twitter/callback',
-    callbackURL: 'https://mern-backend.herokuapp.com/auth/twitter/callback'
+    callbackURL: 'http://127.0.0.1:8001/auth/twitter/callback'
+    // callbackURL: 'https://mern-backend.herokuapp.com/auth/twitter/callback'
     // proxy: trustProxy
   },
     function (accessToken, refreshToken, profile, done) {

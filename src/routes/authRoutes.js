@@ -20,8 +20,8 @@ function router() {
       (req, res) => {
           //res.send(req.user)
           debug('auth routes',req.user)
-          // res.redirect('http://127.0.0.1:3000');
-          res.redirect('https://mern-backend.herokuapp.com');
+          res.redirect('http://127.0.0.1:3000');
+          // res.redirect('https://mern-backend.herokuapp.com');
 
           // res.status(200).json({ message: "you reached the redirect URI", user: req.user });
 
@@ -38,8 +38,8 @@ function router() {
       (req, res) => {
           //res.send(req.user)
           debug('tweet routes',req.user)
-          // res.redirect('http://127.0.0.1:3000');
-          res.redirect('https://mern-backend.herokuapp.com');
+          res.redirect('http://127.0.0.1:3000');
+          // res.redirect('https://mern-backend.herokuapp.com');
 
           // res.status(200).json({ message: "you reached the redirect URI", user: req.user });
 
