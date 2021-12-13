@@ -6,6 +6,7 @@ const User = require('../../models/User')
 //   Strategies in passport require a `verify` function, which accept
 //   credentials (in this case, a token, tokenSecret, and Google profile), and
 //   invoke a callback with a user object.module.exports = function localStrategy() {
+
 module.exports = function googleStrategy() {
   passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
@@ -14,11 +15,7 @@ module.exports = function googleStrategy() {
     callbackURL: '/github/callback'
   },
     function (accessToken, refreshToken, profile, done) {
-      // User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      //   console.log('google passport', user)
-      //   return done(err, user);
-      // });
-      console.log('p',profile)
+      console.log('p',profile, 'at',accessToken, 'reft', refreshToken)
       User.findOne({ githubId: profile.id }).then((user) => {
         if (user) {
           //if we already have a record with the given profile ID

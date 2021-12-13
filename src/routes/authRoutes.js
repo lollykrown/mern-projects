@@ -23,7 +23,7 @@ authRouter.route("/login/failed").get((req, res) => {
     // The middleware receives the data from Github and runs the function on Strategy config
     authRouter.get('/github/callback', passport.authenticate('github'),
         (req, res) => {
-            //res.send(req.user)
+            // res.redirect('/')
             res.status(200).json({ message: "you reached the redirect URI", user: req.user });
         });
 
