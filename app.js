@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const cors = require("cors");
 const path = require('path')
 const MongoStore = require('connect-mongo')(session);
+const debug = require('debug')('app:root')
 
 const errorHandler = require("./src/middlewares/errorHandler");
 
@@ -39,15 +40,16 @@ const sessionOptions = {
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
   // log.info(`Connected to MongoDB: ${db.host}`);
-  console.log(`Connected to MongoDB: ${db.host}`);
+  debug(`Connected to MongoDB: ${db.host}`);
 });
+
 
 // Set up CORS
 const corsOptions = {
-  origin: ['http://localhost:3000','https://kay-insta.netlify.app'],
+  origin: ['http://127.0.0.1:3000','http://localhost:3000', 'https://mern-backend.herokuapp.com','https://kay-insta.netlify.app'],
   methods: ['POST', 'PUT', 'GET', 'PATCH', 'OPTIONS', 'DELETE', 'HEAD'],
   credentials: true,
-  allowedHeaders: "Content-Type, Authorization, X-Requested-With",
+  allowedHeaders: ["Access-Control-Allow-Origin", "Content-Type, Authorization, X-Requested-With"],
 
   // "preflightContinue": false,
   // "optionsSuccessStatus": 204,
@@ -83,5 +85,5 @@ app.use(errorHandler);
 
 app.listen(
   port,
-  console.log(`🌎  => server started in ${process.env.NODE_ENV} mode at port ${port}`)
+  debug(`🌎  => server started in ${process.env.NODE_ENV} mode at port ${port}`)
 );

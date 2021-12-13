@@ -39,7 +39,7 @@ const NewPostWrapper = styled.div`
   }
 
   .modal-content {
-    width: 700px;
+    width: 400px;
   }
 
   @media screen and (max-width: 780px) {

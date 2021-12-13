@@ -5,12 +5,14 @@
   "main": "app.js",
   "scripts": {
     "client-install": "npm install --prefix client",
-    "start": "node app.js",
+    "start": "SET DEBUG=mern,app:* & nodemon app.js",
     "client-build": "npm run build --prefix client",
     "server": "nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "client": "npm start --prefix client",
+    "debug": "SET DEBUG=mern,app:* & nodemon app.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev-debug": "concurrently \"npm run debug\" \"npm run client\"",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "author": "",
@@ -29,6 +31,7 @@
     "nodemon": "^2.0.6",
     "passport": "^0.4.1",
     "passport-github2": "^0.1.12",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "passport-twitter": "^1.0.4"
   }
 }

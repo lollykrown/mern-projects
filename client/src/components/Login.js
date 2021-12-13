@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 import useInput from "../hooks/useInput";
@@ -54,6 +54,13 @@ export const FormWrapper = styled.div`
     border: 1px solid ${(props) => props.theme.blue};
     cursor: pointer;
   }
+  .twitter {
+    background-color: ${(props) => props.theme.rand};
+    color: ${(props) => props.theme.white};
+    border: 1px solid ${(props) => props.theme.blue};
+    cursor: pointer;
+    padding: 0.5rem 1.2rem;
+  }
   p {
     margin-top: 2rem;
   }
@@ -74,12 +81,48 @@ const Login = (props) => {
   const password = useInput("");
   const [loading, setLoading] = useState(false);
 
-  const googleLogin = async() =>{
+  useEffect(() => {
+    const checkAuthStatus = async () => {    
+      try {
+        const res = await Axios.get('/me',  {
+          cancelToken: source.token 
+        })
+          // console.log('checking', res)
+
+          // if(!res.data.status){
+          //   setLoading(false)
+          //   localStorage.removeItem("user");
+          //   toast.error('Your session expired, refresh to reedirect to login page')
+          //   console.log('user',user)
+          //   window.location.reload();
+          // }
+
+          if(res.data.status){
+            setUser(res.data.data)
+          }
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        } else {
+          setLoading(false)
+          throw error
+        }
+      }
+    };
+    
+    checkAuthStatus()
+    return () => {
+      source.cancel('Operation canceled by the user.');
+      console.log('unmount and cancel running axios request');
+    };
+  }, [setUser])
+
+  const githubLogin = async() =>{
     try {
-      const res = await Axios.get('/github', {
-        headers: {
-          'Authorization': 'c137cf89655e50b2f36dedbe624dac3485510cf0'
-        },
+      const res = await Axios.get('http://127.0.0.1:8001/auth/github', {
+        // headers: {
+        //   'Authorization': 'c137cf89655e50b2f36dedbe624dac3485510cf0'
+        // },
         cancelToken: source.token
       })
 
@@ -89,7 +132,7 @@ const Login = (props) => {
       }
       localStorage.setItem("user", JSON.stringify(res.data.data));
       // setUser(res.data.data);
-      console.log('google',res)
+      console.log('github',res)
       toast.success("Login successful");
       setLoading(false);
 
@@ -121,6 +164,7 @@ const Login = (props) => {
       if (!res.status) {
         console.log(res.data)
         toast.error(res.data.message)
+        window.location.reload();
         return;
       }
       localStorage.setItem("user", JSON.stringify(res.data.data));
@@ -134,8 +178,8 @@ const Login = (props) => {
         console.log('Get request canceled');
         toast.error(err.message)
       } else {
-        console.log(err.message)
-        toast.error(err.message)
+        console.log(err.response.data.error)
+        toast.error(err.response.data.message)
       }
     }
 
@@ -166,11 +210,21 @@ const Login = (props) => {
           value={password.value}
           onChange={password.onChange}
         />
+        {/* <Link to="/accounts/change-password"><p>Change Password</p></Link> */}
+
         <input type="submit" value="Log In" className="login-btn" />
       </form>
-      <button value="" onClick={() => googleLogin()} className="login-btn github">Log In with Github</button>
+      {/* <a className="login-btn github" href="https://mern-backend.herokuapp.com/auth/github">Log In with Github</a>
+      <a className="login-btn twitter" href="https://mern-backend.herokuapp.com/auth/twitter">Log In with Twitter</a> */}
+
+      <a className="login-btn github" href="http://127.0.0.1:8001/auth/github">Log In with Github</a>
+      <a className="login-btn twitter" href="http://127.0.0.1:8001/auth/twitter">Log In with Twitter</a>
+
+      {/* <button onClick={() => githubLogin()} className="login-btn github">Log In with Github</button> */}
 
       <div>
+      <p><span onClick={props.changepassword}>Change Password</span></p>
+
         <p>
           Don't have an account? <span onClick={props.signup}>Sign up</span>
         </p>

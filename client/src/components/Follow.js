@@ -17,7 +17,6 @@ const Follow = ({ nobtn, isFollowing, incFollowers, decFollowers, userId }) => {
       const res = await Axios.get(`/users/${userId}/${action}`, {
         cancelToken: source.token
       })
-      console.log(res)
     } catch (err) {
       if (axios.isCancel(err)) {
         console.log('Get request canceled');

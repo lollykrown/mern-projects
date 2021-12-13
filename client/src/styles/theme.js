@@ -7,4 +7,5 @@ export const lightTheme = {
   white: "#FFF",
   borderColor: "#DBDBDB",
   borderRadius: "4px",
+  rand:"#04D9FF"
 };

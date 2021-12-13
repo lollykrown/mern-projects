@@ -7,7 +7,6 @@ import Loader from "../components/Loader";
 import { FeedContext } from "../context/FeedContext";
 import { UserContext } from "../context/UserContext";
 import { toast } from "react-toastify";
-import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import Axios from '../utils/axios'
 
@@ -24,7 +23,6 @@ const Home = () => {
   const { feed, setFeed } = useContext(FeedContext);
   const [loading, setLoading] = useState(true);
 
-  const history = useHistory();
   const CancelToken = axios.CancelToken;
   const source = CancelToken.source();
   
@@ -41,7 +39,7 @@ const Home = () => {
             localStorage.removeItem("user");
             toast.error('Your session expired, refresh to reedirect to login page')
             console.log('user',user)
-            history.replace('/')
+            window.location.reload();
           }
 
           if(res.data.status){
@@ -72,6 +70,7 @@ const Home = () => {
         const res = await Axios.get('/posts',  {
           cancelToken: source.token 
         })
+
           setFeed(res.data.data)
           setLoading(false);
       } catch (error) {
